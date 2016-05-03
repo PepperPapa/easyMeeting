@@ -1,40 +1,118 @@
+/*声明顺序
+相关的属性声明应当归为一组，并按照下面的顺序排列：
+	1. Positioning
+	2. Box model
+	3. Typographic
+	4. Visual
+由于定位（positioning）可以从正常的文档流中移除元素，并且还能覆盖盒模型（box model）
+相关的样式，因此排在首位。盒模型排在第二位，因为它决定了组件的尺寸和位置。
+其他属性只是影响组件的内部（inside）或者是不影响前两组属性，因此排在后面。*/
+
 header {
+  /*Positioning*/
+  /*Box-model*/
   height: 50px;
   border-bottom: 1px solid #ddd;
+  /*Typography*/
+  /*Visual*/
   background-color: #f6f6f6;
+  /*Misc*/
 }
 .banner {
+  /*Positioning*/
+  /*Box-model*/
   margin: 0 auto;
   height: 100%;
   width: 60%;
+  min-width: 200px;
+  /*Typography*/
+  /*Visual*/
+  /*Misc*/
 }
 .logo {
+  /*Positioning*/
+  float: left;
+  /*Box-model*/
   display: block;
+  /*Typography*/
   font-size: 2.5em;
   line-height: 50px;
-  float: left;
+  /*Visual*/
+  /*Misc*/
+}
+button {
+  outline: none;
 }
 button.login {
+  /*Positioning*/
   float: right;
+  /*Box-model*/
   margin: 10px 4px;
   width: 60px;
   height: 30px;
-  font-size: 1em;
   border-radius: 2px;
   border: 1px solid #bbb;
+  /*Typography*/
+  font-size: 1em;
   color: gray;
+  /*Visual*/
   background: -webkit-linear-gradient(top, #fff 0%, #eee 100%);
+  background: -ms-linear-gradient(top, #fff 0%, #eee 100%);
+  background: -moz-linear-gradient(top, #fff 0%, #eee 100%);
+  background: -o-linear-gradient(top, #fff 0%, #eee 100%);
   background: linear-gradient(top, #fff 0%, #eee 100%);
+  /*Misc*/
 }
 button.register {
+  /*Positioning*/
   float: right;
+  /*Box-model*/
   margin: 10px 4px;
   width: 60px;
   height: 30px;
-  font-size: 1em;
   border-radius: 2px;
   border: 1px solid #60b044;
+  /*Typography*/
+  font-size: 1em;
   color: white;
+  /*Visual*/
   background: -webkit-linear-gradient(top, #8add6d 0%, #60b044 100%);
+  background: -ms-linear-gradient(top, #8add6d 0%, #60b044 100%);
+  background: -moz-linear-gradient(top, #8add6d 0%, #60b044 100%);
+  background: -o-linear-gradient(top, #8add6d 0%, #60b044 100%);
   background: linear-gradient(top, #8add6d 0%, #60b044 100%);
+  /*Misc*/
+}
+button.register:hover {
+  background: -webkit-linear-gradient(top, #75cb57, #75cb57);
+  background: -ms-linear-gradient(top, #75cb57, #75cb57);
+  background: -moz-linear-gradient(top, #75cb57, #75cb57);
+  background: -o-linear-gradient(top, #75cb57, #75cb57);
+  background: linear-gradient(top, #75cb57, #75cb57);
+}
+button.login:hover {
+  background: -webkit-linear-gradient(top, #f2f2f2, #f2f2f2);
+  background: -ms-linear-gradient(top, #f2f2f2, #f2f2f2);
+  background: -moz-linear-gradient(top, #f2f2f2, #f2f2f2);
+  background: -o-linear-gradient(top, #f2f2f2, #f2f2f2);
+  background: linear-gradient(top, #f2f2f2, #f2f2f2);
+}
+img.user {
+  display: none;
+}
+header.true img {
+  /*Positioning*/
+  float: right;
+  /*Box-model*/
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 5px 10px;
+  border-radius: 50%;
+  /*Typography*/
+  /*Visual*/
+  /*Misc*/
+}
+header.true button {
+  display: none;
 }
