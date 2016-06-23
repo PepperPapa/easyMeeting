@@ -1,3 +1,4 @@
+/*header style*/
 .menu, .search {
   text-align: left;
 }
@@ -7,11 +8,17 @@
 }
 .logo h3 {
   margin: 0;
-  line-height: 38px;
+  line-height: 34px;
   font-family: "微软雅黑", sans-serif;
   color: #888;
 }
 
 .user {
   text-align: right;
+}
+
+/*making .menu, .search, .user verical align center*/
+header .row {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
