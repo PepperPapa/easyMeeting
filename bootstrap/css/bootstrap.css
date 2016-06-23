@@ -1092,7 +1092,7 @@ body {
   font-size: 14px;
   line-height: 1.42857143;
   color: #333333;
-  background-color: #ffffff;
+  background-color: #cdc;
 }
 input,
 button,
@@ -4175,12 +4175,12 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar {
   position: relative;
   /*min-height: 50px;*/   /* remove by zx */
-  margin-bottom: 20px;
+  /*margin-bottom: 20px;*/ /* remove by zx */
   border: 1px solid transparent;
 }
 @media (min-width: 768px) {
   .navbar {
-    border-radius: 4px;
+    /*border-radius: 4px; */  /* remove by zx */
   }
 }
 @media (min-width: 768px) {
@@ -5457,7 +5457,8 @@ button.list-group-item-danger.active:focus {
   line-height: 1.3;
 }
 .panel {
-  margin-bottom: 20px;
+  /*margin-bottom: 20px;*/ /* remove by zx */
+  margin: 10px 10px;
   background-color: #ffffff;
   border: 1px solid transparent;
   border-radius: 4px;

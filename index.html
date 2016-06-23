@@ -41,21 +41,37 @@
     </div>
   </header>
 
-  <div class="well">
-    <main>
-      <div class="calendar">
-        <h3>pending</h3>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <div class="row">
+        <div class="col-md-2">
+          <button class="btn btn-default">Today</button>
+          <button class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+          </button>
+          <button class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </button>
+        </div>
+        <div class="col-md-8 calendar-current-month">
+          <h3>2016.06</h3>
+        </div>
+        <div class="col-md-2 calendar-view">
+          <button class="btn btn-default">Week</button>
+          <button class="btn btn-default">Month</button>
+        </div>
       </div>
-
-      <div class="timeline">
-        <h3>pending</h3>
+      <div class="row">
+        <div class="week col-wk-1">Sun</div>
+        <div class="week col-wk-1">Mon</div>
+        <div class="week col-wk-1">Tue</div>
+        <div class="week col-wk-1">Wen</div>
+        <div class="week col-wk-1">Thu</div>
+        <div class="week col-wk-1">Fri</div>
+        <div class="week col-wk-1">Sat</div>
       </div>
-    </main>
+    </div>
   </div>
-
-  <footer>
-    <h3>pending</h3>
-  </footer>
 
   <!-- scripts -->
   <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>

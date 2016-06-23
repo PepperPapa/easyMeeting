@@ -22,3 +22,29 @@ header .row {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+
+
+/*calendar style*/
+.calendar-view {
+  text-align: right;
+}
+
+.calendar-current-month {
+  text-align: center;
+}
+
+.calendar-current-month h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 34px;
+}
+
+.week {
+  display: inline-block;
+  box-sizing: border-box; 
+}
+
+.col-wk-1 {
+  width: 14.2857%;
+}
