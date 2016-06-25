@@ -13,5 +13,6 @@ gulp.task("serve", function() {
 gulp.task("watch", function() {
   gulp.watch("*.html").on("change", reload);
   gulp.watch("css/*.css").on("change", reload);
+  gulp.watch("bootstrap/css/*.css").on("change", reload);
   gulp.watch("js/*.js").on("change", reload);
 });
