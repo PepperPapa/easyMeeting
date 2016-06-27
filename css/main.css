@@ -1,20 +1,35 @@
 /*header style*/
 .menu, .search {
   text-align: left;
+  margin-left: 5px;
+  float: left;
+}
+
+.search {
+  width: 190px;
+}
+
+.search input:focus {
+  width: 380px;
 }
 
 .logo {
   text-align: center;
 }
 .logo h3 {
-  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   line-height: 34px;
-  font-family: "微软雅黑", sans-serif;
-  color: #888;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .user {
   text-align: right;
+  float: right;
+  margin-right: 10px;
 }
 
 /*making .menu, .search, .user verical align center*/
@@ -34,27 +49,35 @@ header .row {
   overflow: hidden;
 }
 
-.calendar-header .col-md-2 {
-  overflow: visible;
+.calendar-title {
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin-top: 10px;
+  line-height: 34px;
+}
+
+.calendar-today {
+  float: left;
+  margin-left: 8px;
+}
+
+.calendar-next-pre {
+  float: left;
+  margin-left: 8px;
 }
 
 .calendar-view {
+  float: right;
+  margin-right: 15px;
   text-align: right;
-}
-
-.calendar-current-month {
-  text-align: center;
-}
-
-.calendar-current-month h3 {
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 34px;
 }
 
 .scroll-bar {
   position: absolute;
-  top: 75px;
+  top: 85px;
   bottom: 0;
   width: 100%;
   overflow-x: hidden;
@@ -117,7 +140,7 @@ header .row {
 } /* 滚动条的滑轨背景颜色 */
 ::-webkit-scrollbar-thumb {
 	  border-radius: 5px;
-	  background-color: #bbb;
+	  background-color: #ccc;
 } /* 滑块颜色 */
 ::-webkit-scrollbar-button {
 	  display: none;

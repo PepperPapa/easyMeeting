@@ -13,11 +13,13 @@
   <header class="navbar navbar-default">
     <div class="container-fluid">
       <div class="row">
-        <div class="menu col-md-1">
-          <button class="btn btn-default">Menu</button>
+        <div class="menu">
+          <button class="btn btn-default">
+            <span class="glyphicon glyphicon-tasks"></span> 菜单
+          </button>
         </div>
 
-        <div class="search col-md-2">
+        <div class="search">
           <div class="input-group">
             <input class="form-control" type="text">
             <span class="input-group-btn">
@@ -33,7 +35,7 @@
           <h3>easyMeeting</h3>
         </div>
 
-        <div class="user col-md-3">
+        <div class="user">
           <button class="register btn btn-default">注册</button>
           <button class="login btn btn-default">登录</button>
         </div>
@@ -44,8 +46,11 @@
   <div class="calendar-wrapper panel panel-default">
     <div class="calendar-header panel-heading">
       <div class="row">
-        <div class="col-md-2">
+        <h2 class="calendar-title">2016.06</h2>
+        <div class="calendar-today">
           <button class="btn btn-default">回到今天</button>
+        </div>
+        <div class="calendar-next-pre">
           <button class="btn btn-default">
             <span class="glyphicon glyphicon-chevron-up"></span>
           </button>
@@ -53,15 +58,12 @@
             <span class="glyphicon glyphicon-chevron-down"></span>
           </button>
         </div>
-        <div class="col-md-8 calendar-current-month">
-          <h3>2016.06</h3>
-        </div>
-        <div class="col-md-2 calendar-view">
+        <div class="calendar-view">
           <button class="btn btn-default">周视图</button>
           <button class="btn btn-default">月视图</button>
         </div>
       </div> <!-- end of row -->
-      <div class="week">
+      <div class="week row">
         <div>周日</div>
         <div>周一</div>
         <div>周二</div>
