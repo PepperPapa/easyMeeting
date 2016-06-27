@@ -5458,7 +5458,7 @@ button.list-group-item-danger.active:focus {
 }
 .panel {
   /*margin-bottom: 20px;*/ /* remove by zx */
-  margin: 10px 10px;
+  /*margin: 10px 10px;*/
   background-color: #f5f5f5;
   /*border: 1px solid transparent;*/
   border-radius: 4px;
@@ -5466,7 +5466,7 @@ button.list-group-item-danger.active:focus {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 .panel-body {
-  padding: 5px;
+  /*padding: 5px;*/
 }
 .panel-heading {
   padding: 10px 15px;
