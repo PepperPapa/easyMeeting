@@ -1,4 +1,13 @@
 /*header style*/
+.container-fluid {
+  font-weight: bold;
+  background-color: #026aa7;
+}
+
+header.navbar-default {
+  border: 0;
+}
+
 .menu, .search {
   text-align: left;
   margin-left: 5px;
@@ -9,21 +18,38 @@
   width: 190px;
 }
 
+.search input {
+  background-color: #3784c6;
+}
+
 .search input:focus {
   width: 380px;
 }
 
 .logo {
-  text-align: center;
-}
-.logo h3 {
   position: absolute;
-  top: 0;
+  top: 5px;
   left: 0;
   right: 0;
+  text-align: center;
   line-height: 34px;
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.logo img {
+  height: 34px;
+  width: auto;
+}
+
+.logo a {
+  color: #ddd;
+  text-decoration: none;
+}
+
+.logo span {
+  font-size: 1.6em;
+  font-weight: bold;
 }
 
 .user {
