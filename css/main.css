@@ -24,6 +24,7 @@ header.navbar-default {
 
 .search input:focus {
   width: 380px;
+  background-color: #f5f5f5;
 }
 
 .logo {
@@ -48,7 +49,6 @@ header.navbar-default {
 }
 
 .logo span {
-  font-size: 1.6em;
   font-weight: bold;
 }
 
@@ -101,7 +101,8 @@ header .row {
   text-align: right;
 }
 
-.scroll-bar {
+/* 垂直方向 */
+.scroll-bar-ver {
   position: absolute;
   top: 85px;
   bottom: 0;
@@ -110,11 +111,11 @@ header .row {
   overflow-y: scroll;
 }
 
-.week {
+.day-of-week {
   margin: 10px 0;
 }
 
-.week div {
+.day-of-week div {
   float: left;
   width: 14.2857%;
   text-align: center;
@@ -159,6 +160,7 @@ header .row {
 /*滚动条样式*/
 ::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
 } /* 这是针对缺省样式 (必须的) */
 ::-webkit-scrollbar-track {
   border-radius: 5px;
@@ -174,3 +176,27 @@ header .row {
 ::-webkit-scrollbar-corner {
 	  background-color: #eee;
 } /* 横向滚动条和纵向滚动条相交处尖角的颜色 */
+
+/*水平方向*/
+.scroll-bar-hor {
+  position: absolute;
+  top: 85px;
+  bottom: 0;
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.calendar-week-wrapper {
+  width: 5005px;
+}
+
+.week {
+  float: left;
+  width: 100%;
+}
+
+.day-col {
+  float: left;
+  width: 14.2857%;
+}
