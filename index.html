@@ -7,6 +7,12 @@
   <!-- css style links -->
   <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="images/logo.png">
+
+  <!-- scripts -->
+  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+  <script src="bootstrap/js/bootstrap.js"></script>
+  <script src="js/calendar.js"></script>
 </head>
 <body>
   <!-- app heaher -->
@@ -33,7 +39,7 @@
         <div class="logo">
           <!-- logo -->
           <a href="#">
-            <img class="hide" src="images/logo.png" alt="logo"><span>easyMeeting</span>
+            <img src="images/logo.png" alt="logo"><span>easyMeeting</span>
           </a>
         </div>
 
@@ -61,8 +67,8 @@
           </button>
         </div>
         <div class="calendar-view">
-          <button class="btn btn-default">周视图</button>
-          <button class="btn btn-default">月视图</button>
+          <button id="btn-show-week" class="btn btn-default">周视图</button>
+          <button id="btn-show-month" class="btn btn-default">月视图</button>
         </div>
       </div> <!-- end of row -->
       <div class="day-of-week row">
@@ -77,7 +83,7 @@
     </div>  <!-- end of panel-heading -->
 
     <div class="calendar-content panel-body">
-      <div class="hide calendar-month-view scroll-bar-ver">
+      <div class="calendar-month-view scroll-bar-ver">
         <table class="calendar-table table">
           <tr>
             <td>
@@ -235,7 +241,7 @@
         </table>
       </div> <!-- end of scroll-bar -->
 
-      <div class="calendar-week-view scroll-bar-hor">
+      <div class="hide calendar-week-view scroll-bar-hor">
         <div class="calendar-weeks-wrapper">
           <div class="week">
             <div class="day-col">01</div>
@@ -286,10 +292,5 @@
       </div> <!-- end of calendar-week-view -->
     </div> <!-- end of panel-body -->
   </div> <!-- end of calendar-wrapper -->
-
-  <!-- scripts -->
-  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-  <script src="bootstrap/js/bootstrap.js"></script>
-  <script src="js/calendar.js"></script>
 </body>
 </html>

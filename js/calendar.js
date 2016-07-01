@@ -1,6 +1,6 @@
 
 $(function() {
-  // week view
+  // 周视图相关元素
   var $calendar_week_view = $(".calendar-week-view");
   var $calendar_weeks_wrapper = $(".calendar-weeks-wrapper");
   var $one_week = $(".week");
@@ -20,5 +20,25 @@ $(function() {
     // 设置每一天.day-col所占的宽度 = （一周的宽度 - 所有margin的宽度） / 7
     var day_width = (week_width - 70) / 7;
     $day_col.css("width", day_width);
-  }).trigger("resize");
+  });
+
+  // 页面初次加载需要设置week视图的UI元素的宽度
+  $(window).trigger("resize");
+
+  // 月视图和周视图切换
+  var $calendar_month_view = $(".calendar-month-view");
+  $("#btn-show-month").on("click", function() {
+    if ($calendar_month_view.hasClass("hide")) {
+      $calendar_week_view.addClass("hide");
+      $calendar_month_view.removeClass("hide");
+    }
+  });
+
+  $("#btn-show-week").on("click", function() {
+    if ($calendar_week_view.hasClass("hide")) {
+      $calendar_month_view.addClass("hide");
+      $calendar_week_view.removeClass("hide");
+      $(window).trigger("resize");    // week视图显示需要触发一次刷新
+    }
+  });
 });
