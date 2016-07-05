@@ -25,7 +25,7 @@ $(function() {
   // 页面初次加载需要设置week视图的UI元素的宽度
   $(window).trigger("resize");
 
-  // 月视图和周视图切换
+  // 切换至月视图
   var $calendar_month_view = $(".calendar-month-view");
   $("#btn-show-month").on("click", function() {
     if ($calendar_month_view.hasClass("hide")) {
@@ -34,11 +34,20 @@ $(function() {
     }
   });
 
+  //切换至周视图
   $("#btn-show-week").on("click", function() {
     if ($calendar_week_view.hasClass("hide")) {
       $calendar_month_view.addClass("hide");
       $calendar_week_view.removeClass("hide");
       $(window).trigger("resize");    // week视图显示需要触发一次刷新
+    }
+  });
+
+  // 月视图下点击某一天扩展显示
+  $(".calendar-table").on("click", function(event) {
+    if (event.target.className == "day-cell") {
+      $(".calendar-day.active").removeClass("active"); // 首先删除当前的active元素扩展显示
+      $(event.target).children().addClass("active");  // 下级元素扩展显示
     }
   });
 });

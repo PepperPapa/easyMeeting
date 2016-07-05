@@ -124,39 +124,54 @@ header .row {
   text-align: center;
 }
 
-.day {
-  width: 100%;
-  padding: 10px 10px;
+.day-cell {
+  position: relative;
+  width: 14.2857%;
   background-color: #eee;
 }
 
 @media (max-width: 768px) {
-  .day {
+  .day-cell {
     height: 50px;
   }
 }
 
 @media (max-width: 1199px) and (min-width: 769px) {
-  .day {
+  .day-cell {
     height: 105px;
   }
 }
 
 @media (min-width: 1200px) {
-  .day {
+  .day-cell {
     height: 140px;
   }
 }
 
-.day:hover {
+.day-cell:hover {
   background-color: #ddd;
+}
+
+.day-cell .active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 270px;
+  height: 350px;
+  z-index: 1000;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #ebebeb;
+  box-shadow: 0 0 6px rgba(0,0,0,.35),
+              0 0 1px rgba(0,0,0,.1);
 }
 
 .calendar-table tr td {
   border: 5px solid #f5f5f5;
+  border-radius: 4px;
 }
 
-.calendar-table tr > td:not(:first-child) .day {
+.calendar-table tr > td:not(:first-child) .day-cell {
   border-left: 0;
 }
 
