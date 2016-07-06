@@ -152,10 +152,31 @@ header .row {
   background-color: #ddd;
 }
 
-.day-cell .active {
+.calendar-table tr td:nth-child(1) .active,
+.calendar-table tr td:nth-child(2) .active,
+.calendar-table tr td:nth-child(3) .active,
+.calendar-table tr td:nth-child(4) .active,
+.calendar-table tr td:nth-child(5) .active
+{
   position: absolute;
   top: 0;
   left: 0;
+  width: 270px;
+  height: 350px;
+  z-index: 1000;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #ebebeb;
+  box-shadow: 0 0 6px rgba(0,0,0,.35),
+              0 0 1px rgba(0,0,0,.1);
+}
+
+.calendar-table tr td:last-child .active,
+.calendar-table tr td:nth-last-child(2) .active
+{
+  position: absolute;
+  top: 0;
+  right: 0;
   width: 270px;
   height: 350px;
   z-index: 1000;
