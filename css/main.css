@@ -127,7 +127,7 @@ header .row {
 .day-cell {
   position: relative;
   width: 14.2857%;
-  background-color: #eee;
+  background-color: #edeff0;
 }
 
 @media (max-width: 768px) {
@@ -167,7 +167,7 @@ header .row {
   z-index: 1000;
   border: 1px solid #ddd;
   border-radius: 4px;
-  background-color: #ebebeb;
+  background-color: inherit;
   box-shadow: 0 0 6px rgba(0,0,0,.35),
               0 0 1px rgba(0,0,0,.1);
 }
@@ -184,13 +184,17 @@ header .row {
   z-index: 1000;
   border: 1px solid #ddd;
   border-radius: 4px;
-  background-color: #ebebeb;
+  background-color: inherit;
   box-shadow: 0 0 6px rgba(0,0,0,.35),
               0 0 1px rgba(0,0,0,.1);
 }
 
 .calendar-day {
   padding: 8px;
+}
+
+.calendar-day:not(.active) {
+  height: 100%;
 }
 
 .calendar-table tr td {
@@ -233,7 +237,6 @@ header .row {
 
 .calendar-weeks-wrapper {
   height: 100%;
-  text-align: center;
 }
 
 .week {
@@ -242,6 +245,7 @@ header .row {
 }
 
 .day-col {
+  position: relative;
   float: left;
   margin-left: 5px;
   margin-right: 5px;
@@ -263,7 +267,7 @@ header .row {
 .day-header h3 {
   display: inline-block;
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   color: #8c8c8c;
 }
 
@@ -278,7 +282,8 @@ header .row {
 }
 
 .close-btn:hover,
-.close-btn:link {
+.close-btn:link,
+.close-btn:active {
   color: #666;
   text-decoration: none;
 }
@@ -324,4 +329,37 @@ header .row {
 .quiet-btn:hover {
   color: #8c8c8c;
   background-color: #ccc;
+}
+
+.week .day-col:nth-child(1) .active,
+.week .day-col:nth-child(2) .active,
+.week .day-col:nth-child(3) .active,
+.week .day-col:nth-child(4) .active,
+.week .day-col:nth-child(5) .active {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  bottom: 2px;
+  width: 270px;
+  z-index: 1000;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: inherit;
+  box-shadow: 0 0 6px rgba(0,0,0,.35),
+              0 0 1px rgba(0,0,0,.1);
+}
+
+.week .day-col:nth-child(6) .active,
+.week .day-col:last-child .active {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  bottom: 2px;
+  width: 270px;
+  z-index: 1000;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: inherit;
+  box-shadow: 0 0 6px rgba(0,0,0,.35),
+              0 0 1px rgba(0,0,0,.1);
 }

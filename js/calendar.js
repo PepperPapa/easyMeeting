@@ -44,9 +44,21 @@ $(function() {
   });
 
   // 月视图下点击某一天扩展显示
-  $(".calendar-table").delegate("td", "click", function() {
+  $(".calendar-month-view").on("click", ".js-expand-day", function() {
     // 首先删除当前的active元素扩展显示
     $(".js-expand-day.active").removeClass("active");
-    $(this).children().addClass("active");  // 该元素扩展显示
+    $(this).addClass("active");  // 该元素扩展显示
+  });
+
+  // 周视图下点击某一天扩展显示
+  $(".calendar-week-view").on("click", ".js-expand-day", function() {
+    // 首先删除当前的active元素扩展显示
+    $(".js-expand-day.active").removeClass("active");
+    $(this).addClass("active");  // 该元素扩展显示
+  });
+
+  // 通过关闭按钮关闭某一天的扩展显示
+  $(".calendar-content").on("click", ".close-btn", function() {
+    $(this).parent().parent().removeClass("active");
   });
 });
