@@ -44,10 +44,9 @@ $(function() {
   });
 
   // 月视图下点击某一天扩展显示
-  $(".calendar-table").on("click", function(event) {
-    if (event.target.className == "day-cell") {
-      $(".calendar-day.active").removeClass("active"); // 首先删除当前的active元素扩展显示
-      $(event.target).children().addClass("active");  // 下级元素扩展显示
-    }
+  $(".calendar-table").delegate("td", "click", function() {
+    // 首先删除当前的active元素扩展显示
+    $(".js-expand-day.active").removeClass("active");
+    $(this).children().addClass("active");  // 该元素扩展显示
   });
 });

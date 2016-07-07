@@ -152,6 +152,7 @@ header .row {
   background-color: #ddd;
 }
 
+/* 月视图下前5列点击向右扩展 */
 .calendar-table tr td:nth-child(1) .active,
 .calendar-table tr td:nth-child(2) .active,
 .calendar-table tr td:nth-child(3) .active,
@@ -171,6 +172,7 @@ header .row {
               0 0 1px rgba(0,0,0,.1);
 }
 
+/* 月视图下6、7列点击向左扩展 */
 .calendar-table tr td:last-child .active,
 .calendar-table tr td:nth-last-child(2) .active
 {
@@ -185,6 +187,10 @@ header .row {
   background-color: #ebebeb;
   box-shadow: 0 0 6px rgba(0,0,0,.35),
               0 0 1px rgba(0,0,0,.1);
+}
+
+.calendar-day {
+  padding: 8px;
 }
 
 .calendar-table tr td {
@@ -248,4 +254,74 @@ header .row {
 .day-col:hover {
   /* 通过调节l通道使hover的背景色更暗一些 借用color-picker插件可以获取非hover状态下的hsl值*/
   background-color: hsl(209, 7%, 86%);
+}
+
+.day-header {
+  cursor: pointer;
+}
+
+.day-header h3 {
+  display: inline-block;
+  margin: 0;
+  font-size: 18px;
+  color: #8c8c8c;
+}
+
+.day-header .close-btn {
+  float: right;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.close-btn:before {
+  content: "\2716";
+}
+
+.close-btn:hover,
+.close-btn:link {
+  color: #666;
+  text-decoration: none;
+}
+
+.calendar-day:not(.active) .close-btn {
+  display: none;
+}
+
+.num-meetings {
+  display: inline-block;
+  color: #8c8c8c;
+}
+
+.calendar-day .meeting-lists {
+  position: absolute;
+  top: 34px;
+  left: 8px;
+  right: 3px;
+  bottom: 42px;
+}
+
+.calendar-day .book-meeting {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 5px;
+}
+
+.calendar-day:not(.active) .book-meeting {
+  display: none;
+}
+
+.quiet-btn {
+  display: block;
+  color: #8c8c8c;
+  padding: 6px 8px;
+  border-radius: 3px;
+  text-decoration: underline;
+  background-color: transparent;
+}
+
+.quiet-btn:hover {
+  color: #8c8c8c;
+  background-color: #ccc;
 }
