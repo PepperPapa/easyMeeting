@@ -308,7 +308,7 @@ header .row {
   bottom: 42px;
 }
 
-.calendar-day .book-meeting {
+.calendar-day .link-book-meeting {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -316,7 +316,7 @@ header .row {
   margin: 5px;
 }
 
-.calendar-day:not(.active) .book-meeting {
+.calendar-day:not(.active) .link-book-meeting {
   display: none;
 }
 
@@ -393,8 +393,9 @@ header .row {
 
 .pop-over-header-title {
   display: block;
-  padding: 0 32px;
-  line-height: 36px;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-bottom: 8px;
   text-align: center;
   border-bottom: 1px solid #d6dadc;
   color: #8c8c8c;
@@ -402,12 +403,12 @@ header .row {
 
 .position-right {
   position: absolute;
-  top: 8px;
+  top: 0;
   right: 8px;
 }
 
 .input-meeting-title {
-  margin: 7px 0 12px 0;
+  margin: 2px 0 8px 0;
   padding: 7px;
   resize: vertical;
   box-sizing: border-box;
@@ -416,4 +417,71 @@ header .row {
   border: 1px solid #cdd2d4;
   border-radius: 3px;
   background-color: #e2e4e6;
+}
+
+.input-meeting-title:focus {
+  background-color: #fff;
+}
+
+.list-btn-link {
+  margin-bottom: 8px;
+}
+
+.list-btn-link.setting {
+  position: relative;
+  padding: 7px;
+  height: 52px;
+  border: 1px solid #e2e4e6;
+  border-bottom-color: #cdd2d4;
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 99;
+  background: linear-gradient(to bottom,#fff 0,#f8f9f9 100%);
+}
+
+.list-btn-link:hover {
+  color: #fff;
+  background: linear-gradient(to bottom,#5cadd6,#5cadd6);
+}
+
+.list-btn-link:hover .setting-label {
+  color: #fff;
+}
+
+.setting-label {
+  display: block;
+  font-size: 9px;
+  line-height: 14px;
+  color: #8c8c8c;
+}
+
+.setting-value {
+  display: block;
+  font-size: 18px;
+  line-height: 24px;
+  overflow: hidden;
+}
+
+.list-btn-link.setting select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  border: none;
+  opacity: 0;
+  z-index: 2;
+  color: #4d4d4d;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.meeting-duration .list-btn-link:first-child {
+  margin-right: 8px;
+}
+
+.btn-book-meeting {
+  font-size: 16px;
+  font-weight: 600;
 }

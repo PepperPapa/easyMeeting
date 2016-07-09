@@ -61,4 +61,5 @@ $(function() {
   $(".calendar-content").on("click", ".close-btn", function() {
     $(this).parent().parent().removeClass("active");
   });
+
 });
