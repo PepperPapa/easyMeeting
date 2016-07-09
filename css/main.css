@@ -371,8 +371,7 @@ header .row {
 .pop-over {
   display: none;
   position: absolute;
-  top: 200px;
-  left: 300px;
+  /*top: 200px;*/
   z-index: 70;
   padding: 8px;
   width: 300px;
