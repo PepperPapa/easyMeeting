@@ -89,4 +89,12 @@ $(function() {
   $(".pop-over .close-btn").on("click", function() {
     $(".pop-over").removeClass("is-shown");
   });
+
+
+  // 周视图下日期显示
+  var today = new Date();
+  var today_day = today.getDay();
+  $(".calendar-week-view .week:first-child .date").eq(today_day)
+                                                  .html(today.getDate());
+  $(".calendar-week-view .week:first-child .calendar-day").eq(today_day).addClass("today");
 });

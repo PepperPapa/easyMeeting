@@ -484,3 +484,7 @@ header .row {
   font-size: 16px;
   font-weight: 600;
 }
+
+.today {
+  background-color: #ede5cf;
+}
