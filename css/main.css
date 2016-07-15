@@ -236,6 +236,7 @@ header .row {
 }
 
 .calendar-weeks-wrapper {
+  position: relative;
   height: 100%;
 }
 

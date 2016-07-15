@@ -90,6 +90,41 @@ $(function() {
     $(".pop-over").removeClass("is-shown");
   });
 
+  // 周视图下上周、下周按钮切换
+  $(".previous-week").on("click", function() {
+    // 周视图下的处理
+    if (!$(".calendar-week-view").hasClass("hide")) {
+      // 获取.week元素
+      var $el_week = $(".calendar-week-view .week");
+      // .week元素的宽度
+      var width_of_week = $el_week[0].clientWidth;
+
+      // 计算目前显示的使第几个.week元素
+      var pages = $(".calendar-weeks-wrapper").css("left").slice(1, -2) / width_of_week;
+      if (pages > 1) {
+        $(".calendar-weeks-wrapper").animate({"left": "+=" + width_of_week}, "slow");
+      }
+    }
+  });
+
+  $(".next-week").on("click", function() {
+    // 周视图下的处理
+    if (!$(".calendar-week-view").hasClass("hide")) {
+      // 获取.week元素
+      var $el_week = $(".calendar-week-view .week");
+      // .week元素的宽度
+      var width_of_week = $el_week[0].clientWidth;
+      // .week元素的数量
+      var num_of_weeks = $el_week.length;
+
+      // 计算目前显示的使第几个.week元素
+      var pages = $(".calendar-weeks-wrapper").css("left").slice(1, -2) / width_of_week;
+      if (pages < (num_of_weeks - 2)) {
+        $(".calendar-weeks-wrapper").animate({"left": "-=" + width_of_week}, "slow");
+      }
+    }
+  });
+
 
   // 周视图下日期显示
   var today = new Date();
