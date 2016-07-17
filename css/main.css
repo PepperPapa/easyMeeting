@@ -1,3 +1,6 @@
+/*comman style*/
+
+
 /*header style*/
 .container-fluid {
   font-weight: bold;
@@ -90,6 +93,9 @@ header .row {
   margin-top: 0;
   margin-bottom: 0;
   line-height: 34px;
+  font-size: 18px;
+  color: #4d4d4d;
+  font-weight: bold;
   background-color: transparent;
 }
 
@@ -266,6 +272,10 @@ header .row {
   background-color: hsl(209, 7%, 86%);
 }
 
+.day-col.today:hover {
+  background-color: #ede5cf;
+}
+
 .day-header {
   cursor: pointer;
 }
@@ -273,8 +283,9 @@ header .row {
 .day-header h3 {
   display: inline-block;
   margin: 0;
-  font-size: 16px;
-  color: #8c8c8c;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4d4d4d;
 }
 
 .day-header .close-btn {

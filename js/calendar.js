@@ -8,11 +8,12 @@ $(function() {
 
   // 根据浏览器窗口变化动态计算week视图下的各元素宽度
   $(window).on("resize", function() {
-    // 获取.week元素的当前宽度
+    // 获取.calendar-week-view元素的当前宽度
     var last_week_width = $one_week.width();
+    console.log(last_week_width, $calendar_week_view.width());
 
     // 获取当前.calendar_weeks_wrapper当前显示的page值
-    var current_week_page = 0;
+    var current_week_page = 2;
     if ($calendar_weeks_wrapper.css("left") !== "auto") {
       current_week_page = Math.floor(
                       Math.abs($calendar_weeks_wrapper.css("left").slice(0, -2))
@@ -36,7 +37,12 @@ $(function() {
     // 设置每一天.day-col所占的宽度 = （一周的宽度 - 所有margin的宽度） / 7
     var day_width = (new_week_width - 70) / 7;
     $day_col.css("width", day_width);
-  });
+  }).trigger("resize");
+
+  // 初始情况下不显示周视图
+  $calendar_week_view.addClass("hide");
+  // 周视图元素的日期和title初始化
+  initWeekView();
 
   // 切换至月视图
   var $calendar_month_view = $(".calendar-month-view");
@@ -52,28 +58,9 @@ $(function() {
     if ($calendar_week_view.hasClass("hide")) {
       $calendar_month_view.addClass("hide");
       $calendar_week_view.removeClass("hide");
-      // week视图显示需要触发一次刷新resize
+
+      // 刷新一次周视图元素的布局
       $(window).trigger("resize");
-      // 初始情况下，today所在的week处在中间的.week元素中，目前设计共5个.week元素
-      var init_page = 2;
-      $calendar_weeks_wrapper.css("left", -init_page * $(".week").width());
-
-      // 更新周视图下的日期显示
-      var day_time = 86400000;
-      var week_time = day_time * 7;
-      var current_start_time = getCurrentWeekStartTime();
-      $(".week").each(function(page) {
-        var $self = $(this);
-        $self.attr("name", current_start_time + (page - init_page) * week_time);
-        $self.children().each(function(index) {
-          var name_attr = Number($self.attr("name")) + index * day_time;
-          $(this).attr("name", name_attr);
-          $(this).find(".date").text(parseTime(name_attr).date);
-        });
-      });
-
-      // 更新calendar-tile信息
-      setCalendarTitle($(".week").eq(init_page).attr("name"));
     }
   });
 
@@ -124,7 +111,7 @@ $(function() {
     $(".pop-over").removeClass("is-shown");
   });
 
-  // 周视图下上周、下周按钮切换
+  // 周视图下上周按钮切换
   $(".previous-week").on("click", function() {
     // 周视图下的处理
     if (!$(".calendar-week-view").hasClass("hide")) {
@@ -133,14 +120,18 @@ $(function() {
       // .week元素的宽度
       var width_of_week = $el_week[0].clientWidth;
 
-      // 计算目前显示的使第几个.week元素
-      var pages = $(".calendar-weeks-wrapper").css("left").slice(1, -2) / width_of_week;
-      if (pages > 1) {
+      // 计算目前显示的是第几个.week元素
+      var current_page = $(".calendar-weeks-wrapper").css("left").slice(1, -2) / width_of_week;
+      if (current_page > 1) {
         $(".calendar-weeks-wrapper").animate({"left": "+=" + width_of_week}, "slow");
+        // 更新calendar title显示的日期范围
+        setCalendarTitle($(".week").eq(current_page - 1).attr("name"));
       }
+
     }
   });
 
+  // 周视图下下周按钮切换
   $(".next-week").on("click", function() {
     // 周视图下的处理
     if (!$(".calendar-week-view").hasClass("hide")) {
@@ -151,15 +142,22 @@ $(function() {
       // .week元素的数量
       var num_of_weeks = $el_week.length;
 
-      // 计算目前显示的使第几个.week元素
-      var pages = $(".calendar-weeks-wrapper").css("left").slice(1, -2) / width_of_week;
-      if (pages < (num_of_weeks - 2)) {
+      // 计算目前显示的是第几个.week元素
+      var current_page = $(".calendar-weeks-wrapper").css("left").slice(1, -2) / width_of_week;
+      if (current_page < (num_of_weeks - 2)) {
         $(".calendar-weeks-wrapper").animate({"left": "-=" + width_of_week}, "slow");
+        // 更新calendar title显示的日期范围
+        setCalendarTitle($(".week").eq(current_page + 1).attr("name"));
       }
+
     }
   });
 
 
-  // 周视图下日期显示
+  // 周视图回到今天按钮点击处理
+  $(".back-to-today").on("click", function() {
+    // week视图下日历title、日期、当天背景颜色等初始化
+    initWeekView();
+  });
 
 });
