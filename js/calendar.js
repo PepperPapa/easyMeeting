@@ -55,7 +55,25 @@ $(function() {
       // week视图显示需要触发一次刷新resize
       $(window).trigger("resize");
       // 初始情况下，today所在的week处在中间的.week元素中，目前设计共5个.week元素
-      $calendar_weeks_wrapper.css("left", -2 * $(".week").width());
+      var init_page = 2;
+      $calendar_weeks_wrapper.css("left", -init_page * $(".week").width());
+
+      // 更新周视图下的日期显示
+      var day_time = 86400000;
+      var week_time = day_time * 7;
+      var current_start_time = getCurrentWeekStartTime();
+      $(".week").each(function(page) {
+        var $self = $(this);
+        $self.attr("name", current_start_time + (page - init_page) * week_time);
+        $self.children().each(function(index) {
+          var name_attr = Number($self.attr("name")) + index * day_time;
+          $(this).attr("name", name_attr);
+          $(this).find(".date").text(parseTime(name_attr).date);
+        });
+      });
+
+      // 更新calendar-tile信息
+      setCalendarTitle($(".week").eq(init_page).attr("name"));
     }
   });
 
@@ -143,9 +161,5 @@ $(function() {
 
 
   // 周视图下日期显示
-  var today = new Date();
-  var today_day = today.getDay();
-  $(".calendar-week-view .week:first-child .date").eq(today_day)
-                                                  .html(today.getDate());
-  $(".calendar-week-view .week:first-child .calendar-day").eq(today_day).addClass("today");
+
 });

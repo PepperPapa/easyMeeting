@@ -75,17 +75,22 @@ header .row {
 
 .calendar-header .row {
   position: relative;
+  /* z-index这里设置非auto会针对子元素创建新的context */
+  z-index: 1;
 }
 
 .calendar-title {
   text-align: center;
   position: absolute;
   top: 0;
-  left: 50%;
-  margin-left: -45px;
+  left: 0;
+  right: 0;
+  /*这里设置z-index为负值使title元素不遮挡周视图、月视图、回到今天等按钮，使其丧失hover和点击效果*/
+  z-index: -1;
   margin-top: 0;
   margin-bottom: 0;
   line-height: 34px;
+  background-color: transparent;
 }
 
 .calendar-today {
