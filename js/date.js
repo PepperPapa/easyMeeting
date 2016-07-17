@@ -10,4 +10,4 @@ function getTodayTime() {
   return start_today.getTime();
 }
 
-console.log(getTodayTime());
+// console.log(getTodayTime());

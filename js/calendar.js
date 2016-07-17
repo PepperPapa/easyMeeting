@@ -8,22 +8,35 @@ $(function() {
 
   // 根据浏览器窗口变化动态计算week视图下的各元素宽度
   $(window).on("resize", function() {
+    // 获取.week元素的当前宽度
+    var last_week_width = $one_week.width();
+
+    // 获取当前.calendar_weeks_wrapper当前显示的page值
+    var current_week_page = 0;
+    if ($calendar_weeks_wrapper.css("left") !== "auto") {
+      current_week_page = Math.floor(
+                      Math.abs($calendar_weeks_wrapper.css("left").slice(0, -2))
+                      / last_week_width);
+    }
+
     // 获取一周所占据的窗口宽度 = .calendar-content元素的宽度
-    var week_width = $calendar_week_view.width();
+    var new_week_width = $calendar_week_view.width();
+    // 计算week元素宽度变化量
+    var offset_width = current_week_page * (new_week_width - last_week_width);
+
+    // 更新.calendar-weeks-wrapper元素的css的left属性值
+    $calendar_weeks_wrapper.css("left", "-=" + offset_width);
 
     // 设置包裹所有week的外层元素的宽度
-    $calendar_weeks_wrapper.css("width", week_width * 5);
+    $calendar_weeks_wrapper.css("width", new_week_width * 5);
 
     // 设置每一有.week元素的宽度等于一周所占据的宽度
-    $one_week.css("width", week_width);
+    $one_week.css("width", new_week_width);
 
     // 设置每一天.day-col所占的宽度 = （一周的宽度 - 所有margin的宽度） / 7
-    var day_width = (week_width - 70) / 7;
+    var day_width = (new_week_width - 70) / 7;
     $day_col.css("width", day_width);
   });
-
-  // 页面初次加载需要设置week视图的UI元素的宽度
-  $(window).trigger("resize");
 
   // 切换至月视图
   var $calendar_month_view = $(".calendar-month-view");
@@ -39,7 +52,10 @@ $(function() {
     if ($calendar_week_view.hasClass("hide")) {
       $calendar_month_view.addClass("hide");
       $calendar_week_view.removeClass("hide");
-      $(window).trigger("resize");    // week视图显示需要触发一次刷新
+      // week视图显示需要触发一次刷新resize
+      $(window).trigger("resize");
+      // 初始情况下，today所在的week处在中间的.week元素中，目前设计共5个.week元素
+      $calendar_weeks_wrapper.css("left", -2 * $(".week").width());
     }
   });
 
