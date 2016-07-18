@@ -138,7 +138,7 @@ header .row {
 .day-cell {
   position: relative;
   width: 14.2857%;
-  background-color: #edeff0;
+  background-color: #f0efee;
 }
 
 @media (max-width: 768px) {
@@ -272,7 +272,8 @@ header .row {
   background-color: hsl(209, 7%, 86%);
 }
 
-.day-col.today:hover {
+.day-col.today:hover,
+.day-cell.today:hover {
   background-color: #ede5cf;
 }
 

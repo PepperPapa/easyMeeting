@@ -10,7 +10,6 @@ $(function() {
   $(window).on("resize", function() {
     // 获取.calendar-week-view元素的当前宽度
     var last_week_width = $one_week.width();
-    console.log(last_week_width, $calendar_week_view.width());
 
     // 获取当前.calendar_weeks_wrapper当前显示的page值
     var current_week_page = 2;
@@ -43,6 +42,8 @@ $(function() {
   $calendar_week_view.addClass("hide");
   // 周视图元素的日期和title初始化
   initWeekView();
+  // 月视图元素的日期和title初始化
+  initMonthView();
 
   // 切换至月视图
   var $calendar_month_view = $(".calendar-month-view");
@@ -123,11 +124,26 @@ $(function() {
       // 计算目前显示的是第几个.week元素
       var current_page = $(".calendar-weeks-wrapper").css("left").slice(1, -2) / width_of_week;
       if (current_page > 1) {
-        $(".calendar-weeks-wrapper").animate({"left": "+=" + width_of_week}, "slow");
+        if (!$(".calendar-weeks-wrapper").is(":animated")) {
+          $(".calendar-weeks-wrapper").animate({"left": "+=" + width_of_week}, "slow");
+        }
         // 更新calendar title显示的日期范围
-        setCalendarTitle($(".week").eq(current_page - 1).attr("name"));
+        setWeekTitle($(".week").eq(current_page - 1).attr("name"));
+      } else if (current_page === 1) {
+        // 以下处理主要使为了实现和其他情况一样的动画滚动效果，page 0是预留的缓冲部分
+        if (!$(".calendar-weeks-wrapper").is(":animated")) {
+          $(".calendar-weeks-wrapper").animate({"left": "+=" + width_of_week},
+            {
+              duration: "slow",
+              complete: function() {
+                $(".calendar-weeks-wrapper").css("left", "-=" + width_of_week);
+                updateWeekNameAttr("backward");
+                // 更新calendar title显示的日期范围
+                setWeekTitle($(".week").eq(current_page).attr("name"));
+              }
+            });
+        }
       }
-
     }
   });
 
@@ -145,11 +161,26 @@ $(function() {
       // 计算目前显示的是第几个.week元素
       var current_page = $(".calendar-weeks-wrapper").css("left").slice(1, -2) / width_of_week;
       if (current_page < (num_of_weeks - 2)) {
-        $(".calendar-weeks-wrapper").animate({"left": "-=" + width_of_week}, "slow");
+        if (!$(".calendar-weeks-wrapper").is(":animated")) {
+          $(".calendar-weeks-wrapper").animate({"left": "-=" + width_of_week}, "slow");
+        }
         // 更新calendar title显示的日期范围
-        setCalendarTitle($(".week").eq(current_page + 1).attr("name"));
+        setWeekTitle($(".week").eq(current_page + 1).attr("name"));
+      } else if (current_page === (num_of_weeks - 2)) {
+        // 以下处理主要使为了实现和其他情况一样的动画滚动效果，page 0是预留的缓冲部分
+        if (!$(".calendar-weeks-wrapper").is(":animated")) {
+          $(".calendar-weeks-wrapper").animate({"left": "-=" + width_of_week},
+            {
+              duration: "slow",
+              complete: function() {
+                $(".calendar-weeks-wrapper").css("left", "+=" + width_of_week);
+                updateWeekNameAttr("forward");
+                // 更新calendar title显示的日期范围
+                setWeekTitle($(".week").eq(current_page).attr("name"));
+              }
+            });
+        }
       }
-
     }
   });
 
