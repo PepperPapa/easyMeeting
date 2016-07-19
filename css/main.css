@@ -160,7 +160,11 @@ header .row {
 }
 
 .day-cell:hover {
-  background-color: #ddd;
+  background-color: #d6d6d6;
+}
+
+.in-month {
+  background-color: #e4e4e4;
 }
 
 /* 月视图下前5列点击向右扩展 */
@@ -210,7 +214,7 @@ header .row {
 
 .calendar-table tr td {
   border: 5px solid #f5f5f5;
-  border-radius: 4px;
+  border-radius: 12px;
 }
 
 .calendar-table tr > td:not(:first-child) .day-cell {

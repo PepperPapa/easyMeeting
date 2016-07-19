@@ -67,6 +67,14 @@ function initCalendarDate($weeks, center_pos, view) {
       $(this).find(".date").text(isFirstDay(name_attr) +
                                  isLastDay(name_attr) +
                                  parseTime(name_attr).date);
+
+      // 月视图下需要当前月添加.in-month类样式，加深背景色以示区分
+      var today = parseToday();
+      var date_daycell = parseTime(name_attr);
+      if ((today.year == date_daycell.year) && (today.month == date_daycell.month)) {
+        $(this).addClass("in-month");
+      }
+
     });
   });
 
