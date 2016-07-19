@@ -1,6 +1,7 @@
 
 $(function() {
-  // 周视图相关元素
+  // 全局元素
+  var $calendar_title = $(".js-calendar-title");
   var $calendar_week_view = $(".calendar-week-view");
   var $calendar_weeks_wrapper = $(".calendar-weeks-wrapper");
   var $one_week = $(".week");
@@ -41,9 +42,9 @@ $(function() {
   // 初始情况下不显示周视图
   $calendar_week_view.addClass("hide");
   // 周视图元素的日期和title初始化
-  initWeekView();
+  initCalendarDate($(".week"), 2, "week");
   // 月视图元素的日期和title初始化
-  initMonthView();
+  initCalendarDate($(".mweek"), 12, "month");
 
   // 切换至月视图
   var $calendar_month_view = $(".calendar-month-view");
@@ -51,6 +52,7 @@ $(function() {
     if ($calendar_month_view.hasClass("hide")) {
       $calendar_week_view.addClass("hide");
       $calendar_month_view.removeClass("hide");
+      $calendar_title.text($calendar_title.attr("title-month-view"));
     }
   });
 
@@ -59,6 +61,7 @@ $(function() {
     if ($calendar_week_view.hasClass("hide")) {
       $calendar_month_view.addClass("hide");
       $calendar_week_view.removeClass("hide");
+      $calendar_title.text($calendar_title.attr("title-week-view"));
 
       // 刷新一次周视图元素的布局
       $(window).trigger("resize");
@@ -188,7 +191,7 @@ $(function() {
   // 周视图回到今天按钮点击处理
   $(".back-to-today").on("click", function() {
     // week视图下日历title、日期、当天背景颜色等初始化
-    initWeekView();
+    initCalendarDate($(".week"), 2, "week");
   });
 
 });

@@ -37,23 +37,30 @@ function setWeekTitle(week_attr_name) {
   var title = [start_date.year, start_date.month, start_date.date].join(".")
                + "-" + [end_date.getFullYear(), end_date.getMonth() + 1,
                  end_date.getDate()].join(".");
-  $(".js-calendar-title").text(title);
+  $(".js-calendar-title").text(title)
+                         .attr("title-week-view", title);
 }
 
-// 更新周视图下的日期显示
-function initWeekView() {
-  // 初始化week视图日期和日历title显示
-  // 初始情况下，today所在的week处在中间的.week元素中，目前设计共5个.week元素
-  var init_page = 2;
-  if (!$(".calendar-weeks-wrapper").is(":animated")) {
-    $(".calendar-weeks-wrapper").animate({"left": -init_page * $(".week").width()});
+/*
+* 月视图、周视图日历日期相关的初始化处理
+* $weeks: 表示月视图、周视图下的weeks jQuery对象
+* center_pos: 表示当前周设计所在元素的index位置
+* view: "week"-weekview, "month"-monthview
+*/
+function initCalendarDate($weeks, center_pos, view) {
+  if (view === "week") {
+    // 初始情况下，today所在的week处在中间的.week元素中，目前设计共5个.week元素
+    if (!$(".calendar-weeks-wrapper").is(":animated")) {
+      $(".calendar-weeks-wrapper").animate({"left": -center_pos * $(".week").width()});
+    }
   }
+
   var day_time = 86400000;
   var week_time = day_time * 7;
   var current_start_time = getCurrentWeekStartTime();
-  $(".week").each(function(page) {
+  $weeks.each(function(page) {
     var $self = $(this);
-    $self.attr("name", current_start_time + (page - init_page) * week_time);
+    $self.attr("name", current_start_time + (page - center_pos) * week_time);
     $self.children().each(function(index) {
       var name_attr = Number($self.attr("name")) + index * day_time;
       $(this).attr("name", name_attr);
@@ -64,8 +71,12 @@ function initWeekView() {
   });
 
   // 更新calendar-tile信息
-  var $current_week = $(".week").eq(init_page);
-  setWeekTitle($current_week.attr("name"));
+  var $current_week = $weeks.eq(center_pos);
+  if (view === "week") {
+    setWeekTitle($current_week.attr("name"));
+  } else {
+    setMonthTitle($current_week.attr("name"));
+  }
 
   // 为当天的.day-col元素添加today类名，以更新today的css样式
   $current_week.children().eq(parseToday().day).addClass("today");
@@ -74,7 +85,9 @@ function initWeekView() {
 function setMonthTitle(name_attr) {
   var start_date = parseTime(name_attr);
   var title = [start_date.year, start_date.month].join("-");
-  $(".js-calendar-title").text(title);
+  $(".js-calendar-title").text(title)
+                         .attr("title-month-view", title);
+
 }
 
 // 判断name_attr代表的日期是否为当月一天
@@ -96,32 +109,6 @@ function isLastDay(name_attr) {
   } else {
     return "";
   }
-}
-
-// 更新月视图下的日期显示
-function initMonthView() {
-  var init_pos = 12;
-  var day_time = 86400000;
-  var week_time = day_time * 7;
-  var current_start_time = getCurrentWeekStartTime();
-  $(".mweek").each(function(page) {
-    var $self = $(this);
-    $self.attr("name", current_start_time + (page - init_pos) * week_time);
-    $self.children().each(function(index) {
-      var name_attr = Number($self.attr("name")) + index * day_time;
-      $(this).attr("name", name_attr);
-      $(this).find(".date").text(isFirstDay(name_attr) +
-                                 isLastDay(name_attr) +
-                                 parseTime(name_attr).date);
-    });
-  });
-
-  // 更新calendar-tile信息
-  var $current_week = $(".mweek").eq(init_pos);
-  setMonthTitle($current_week.attr("name"));
-
-  // 为当天的.day-cell元素添加today类名，以更新today的css样式
-  $current_week.children().eq(parseToday().day).addClass("today");
 }
 
 // 周视图下设计共包含5个.week元素 0，1，2，3，4
