@@ -194,4 +194,26 @@ $(function() {
     initCalendarDate($(".week"), 2, "week");
   });
 
+  // 月视图下.scroll-bar-ver的scroll事件处理
+  // 1. 某一月的.day-cell元素的背景颜色，title随着scroll事件进行改变。
+  // 2. 到达上下边界位置的日期和title刷新。
+  $(".scroll-bar-ver").on("scroll", function() {
+    // scrollTop所对应的行数位置
+    var row_scrollTop = parseInt(this.scrollTop / $(".mweek").height());
+    // .in-month类的第一个元素所在行数位置
+    var row_first_in_month = parseInt($(".in-month:first").index(".day-cell") / 7);
+    // .in-month类的最后一个元素所在行数位置
+    var row_last_in_month = parseInt($(".in-month:last").index(".day-cell") / 7);
+
+    // 需向上一月刷新样式和title
+    if ((row_scrollTop - row_first_in_month) < -2) {
+      updateShowMonth("backward");
+    }
+
+    // 需向下一月刷新样式和title
+    if ((row_scrollTop - row_last_in_month) > -1) {
+      updateShowMonth("forward");
+    }
+  });
+
 });

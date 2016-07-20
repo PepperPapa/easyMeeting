@@ -100,8 +100,35 @@ function initCalendarDate($weeks, center_pos, view) {
 function setScrollTop(row) {
   var $scroll_bar_vertical =  document.querySelector(".scroll-bar-ver");
   var daycell_height = document.querySelector(".mweek").clientHeight;
-  console.log(row, daycell_height);
   $scroll_bar_vertical.scrollTop = row * daycell_height;
+}
+
+// 刷新当前显示的月份样式和title
+// dir: backward, forward
+function updateShowMonth(dir) {
+  if (dir === "backward") {
+    var end_index_last_month = $(".in-month:first").index(".day-cell") - 1;
+    var $end_last_month = $(".day-cell").eq(end_index_last_month);
+    var days_last_month = parseTime($end_last_month.attr("name")).date;
+    var start_index_last_month = end_index_last_month - days_last_month;
+    $(".in-month").removeClass("in-month");
+    for (var i = end_index_last_month; i > start_index_last_month; i--) {
+      $(".day-cell").eq(i).addClass("in-month");
+    }
+  } else {
+    var start_index_next_month = $(".in-month:last").index(".day-cell") + 1;
+    console.log(start_index_next_month);
+    $(".in-month").removeClass("in-month");
+    // 每月最大天数为31天，最大循环次数为31次
+    for (var j = start_index_next_month; j < start_index_next_month + 31; j++) {
+      var $day_cell_index = $(".day-cell").eq(j);
+      $day_cell_index.addClass("in-month");
+      if (($day_cell_index.find(".date").text().length > 2) &&
+         (j > start_index_next_month)) {
+        break;
+      }
+    }
+  }
 }
 
 function setMonthTitle(name_attr) {
@@ -109,7 +136,6 @@ function setMonthTitle(name_attr) {
   var title = [start_date.year, start_date.month].join("-");
   $(".js-calendar-title").text(title)
                          .attr("title-month-view", title);
-
 }
 
 // 判断name_attr代表的日期是否为当月一天
