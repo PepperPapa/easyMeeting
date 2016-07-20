@@ -68,13 +68,14 @@ function initCalendarDate($weeks, center_pos, view) {
                                  isLastDay(name_attr) +
                                  parseTime(name_attr).date);
 
-      // 月视图下需要当前月添加.in-month类样式，加深背景色以示区分
-      var today = parseToday();
-      var date_daycell = parseTime(name_attr);
-      if ((today.year == date_daycell.year) && (today.month == date_daycell.month)) {
-        $(this).addClass("in-month");
+      if (view === "month") {
+        // 月视图下需要当前月添加.in-month类样式，加深背景色以示区分
+        var today = parseToday();
+        var date_daycell = parseTime(name_attr);
+        if ((today.year == date_daycell.year) && (today.month == date_daycell.month)) {
+          $(this).addClass("in-month");
+        }
       }
-
     });
   });
 
@@ -84,10 +85,23 @@ function initCalendarDate($weeks, center_pos, view) {
     setWeekTitle($current_week.attr("name"));
   } else {
     setMonthTitle($current_week.attr("name"));
+    // 设置scroll-bar的位置使当天能够显示出来
+    setScrollTop(10);
   }
 
   // 为当天的.day-col元素添加today类名，以更新today的css样式
   $current_week.children().eq(parseToday().day).addClass("today");
+}
+
+/*
+* 设置月视图下scroll-bar的位置
+* row：表示week元素的行号，从0开始
+*/
+function setScrollTop(row) {
+  var $scroll_bar_vertical =  document.querySelector(".scroll-bar-ver");
+  var daycell_height = document.querySelector(".mweek").clientHeight;
+  console.log(row, daycell_height);
+  $scroll_bar_vertical.scrollTop = row * daycell_height;
 }
 
 function setMonthTitle(name_attr) {
@@ -119,11 +133,13 @@ function isLastDay(name_attr) {
   }
 }
 
-// 周视图下设计共包含5个.week元素 0，1，2，3，4
-// 1.如当前在第1页继续回退则需要刷新所有的name属性值，己日期毫秒数均减少一个day_time或week_time
-// 2.如当前在第3页继续回退则需要刷新所有的name属性值，己日期毫秒数均增加一个day_time或week_time
-// 之所以这么设计是为了保持动画效果的一致
-// back_or_forward:  -1: 表示回退； 1：表示向前
+/*
+* 周视图下设计共包含5个.week元素 0，1，2，3，4
+* 1.如当前在第1页继续回退则需要刷新所有的name属性值，己日期毫秒数均减少一个day_time或week_time
+* 2.如当前在第3页继续回退则需要刷新所有的name属性值，己日期毫秒数均增加一个day_time或week_time
+* 之所以这么设计是为了保持动画效果的一致
+* back_or_forward:  -1: 表示回退； 1：表示向前
+*/
 function updateWeekNameAttr(back_or_forward) {
   var direction;
   if (back_or_forward === "backward") {
