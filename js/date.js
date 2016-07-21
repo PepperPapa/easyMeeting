@@ -112,12 +112,15 @@ function updateShowMonth(dir) {
     var days_last_month = parseTime($end_last_month.attr("name")).date;
     var start_index_last_month = end_index_last_month - days_last_month;
     $(".in-month").removeClass("in-month");
+    // 刷新日历title值
+    setMonthTitle($end_last_month.attr("name"));
     for (var i = end_index_last_month; i > start_index_last_month; i--) {
       $(".day-cell").eq(i).addClass("in-month");
     }
   } else {
     var start_index_next_month = $(".in-month:last").index(".day-cell") + 1;
-    console.log(start_index_next_month);
+    // 刷新日历title值
+    setMonthTitle($(".day-cell").eq(start_index_next_month).attr("name"));
     $(".in-month").removeClass("in-month");
     // 每月最大天数为31天，最大循环次数为31次
     for (var j = start_index_next_month; j < start_index_next_month + 31; j++) {
