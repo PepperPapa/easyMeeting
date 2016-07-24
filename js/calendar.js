@@ -240,4 +240,9 @@ $(function() {
     }
   });
 
+  // 预定会议室弹出框的select选项处理
+  $(".js-select-list").on("change", function(e) {
+    $(this).prev().text(this.value);
+  });
+
 });
