@@ -115,6 +115,20 @@ $(function() {
     $(".pop-over").removeClass("is-shown");
   });
 
+  // 月视图下上月按钮切换
+  $(".previous-month").on("click", function() {
+    if (!$(".calendar-month-view").hasClass("hide")) {
+      updateCalendarDate($(".mweek"), -1);
+    }
+  });
+
+  // 月视图下上月按钮切换
+  $(".next-month").on("click", function() {
+    if (!$(".calendar-month-view").hasClass("hide")) {
+      updateCalendarDate($(".mweek"), +1);
+    }
+  });
+
   // 周视图下上周按钮切换
   $(".previous-week").on("click", function() {
     // 周视图下的处理

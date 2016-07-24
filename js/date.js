@@ -218,16 +218,16 @@ function updateWeekNameAttr(back_or_forward) {
 * dir: -1-上一月， 1-下一月
 */
 function updateCalendarDate($weeks, dir) {
-  var $start_in_month = $(".in-month:first");
+  var $start_in_month = $(".in-month");
   var next_month_start = new Date(Number($start_in_month.attr("name")));
   next_month_start.setMonth(next_month_start.getMonth() + dir);
+  var current_show_month = parseTime(next_month_start.getTime());    
 
   var center_pos = 12;
   var day_time = 86400000;
   var week_time = day_time * 7;
-  var current_start_time = getStartWeekTime(next_month_start.getTime().toString());
-  var current_show_month = parseTime(current_start_time);
-
+  var current_start_time = getStartWeekTime(next_month_start.getTime());
+ 
   //清空.in-month类的day-cell元素
   $(".in-month").removeClass("in-month");
   $(".mweek .today").removeClass("today");
@@ -244,8 +244,9 @@ function updateCalendarDate($weeks, dir) {
 
       // 月视图下需要当前显示月添加.in-month类样式，加深背景色以示区分
       var date_daycell = parseTime(name_attr);
-      if ((date_daycell.year == current_show_month.year) &&
-         (date_daycell.month == current_show_month.month)) {
+      if ((date_daycell.year === current_show_month.year) &&
+         (date_daycell.month === current_show_month.month)) {
+        // console.log(date_daycell.year, date_daycell.month);
         $(this).addClass("in-month");
       }
 
@@ -258,7 +259,7 @@ function updateCalendarDate($weeks, dir) {
 
 
   // 更新calendar-tile信息
-  setMonthTitle(current_start_time);
+  setMonthTitle(current_show_month.time);
   // 设置scroll-bar的位置使当天能够显示出来
   setScrollTop(12);
 
