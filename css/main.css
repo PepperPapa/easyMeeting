@@ -145,6 +145,10 @@ header .row {
   .day-cell {
     height: 50px;
   }
+
+  .scroll-bar-ver {
+    overflow-y: hidden;
+  }
 }
 
 @media (max-width: 1199px) and (min-width: 769px) {

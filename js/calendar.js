@@ -192,6 +192,8 @@ $(function() {
   $(".back-to-today").on("click", function() {
     // week视图下日历title、日期、当天背景颜色等初始化
     initCalendarDate($(".week"), 2, "week");
+    // month视图下日历title、日期、当前背景颜色等初始化
+    initCalendarDate($(".mweek"), 12, "month");
   });
 
   // 月视图下.scroll-bar-ver的scroll事件处理
@@ -207,12 +209,20 @@ $(function() {
 
     // 需向上一月刷新样式和title
     if ((row_scrollTop - row_first_in_month) < -2) {
-      updateShowMonth("backward");
+      if (row_scrollTop < 4) {
+        updateCalendarDate($(".mweek"), -1);
+      } else {
+        updateShowMonth("backward");
+      }
     }
 
     // 需向下一月刷新样式和title
     if ((row_scrollTop - row_last_in_month) > -1) {
-      updateShowMonth("forward");
+      if (row_scrollTop > 15) {
+        updateCalendarDate($(".mweek"), 1);
+      } else {
+        updateShowMonth("forward");
+      }
     }
   });
 

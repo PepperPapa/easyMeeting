@@ -17,6 +17,13 @@ function getCurrentWeekStartTime() {
   return start_day.getTime();
 }
 
+// TODO： zx 该函数要和getCurrentWeekStartTime合并
+function getStartWeekTime(name_attr) {
+  var date = parseTime(name_attr);
+  var start_day = new Date(date.year, date.month - 1, date.date - date.day);
+  return start_day.getTime();
+}
+
 // 根据calendar相关dom元素的name属性解析相应的日期信息：年、月、日
 function parseTime(name_attr) {
   var date = new Date(Number(name_attr));
@@ -58,6 +65,9 @@ function initCalendarDate($weeks, center_pos, view) {
   var day_time = 86400000;
   var week_time = day_time * 7;
   var current_start_time = getCurrentWeekStartTime();
+
+  $(".in-month").removeClass("in-month");  // 先清除已有的in-month类
+
   $weeks.each(function(page) {
     var $self = $(this);
     $self.attr("name", current_start_time + (page - center_pos) * week_time);
@@ -195,4 +205,61 @@ function updateWeekNameAttr(back_or_forward) {
       }
     });
   });
+}
+
+/*
+* 月视图下上下滚动条滚动到边界时需要刷新日期信息
+* 实现思路：
+* 1.无论是向上一月或下一月刷新，都以当前显示月的第一天为起点，获取当月第一天的name值
+* 2.根据该name表示的时间计算出上一月或下一月的第一天的值,使用setMonth()。
+* 3.将新name值作为基准，更新到中间的.mweek元素即行号（12），依次计算出所有元素的name值。
+* 4.根据.day-cell元素的name值刷新日期信息和title信息。
+* 5.scrollTop的位置定位到新显示月的第一天所在的行。
+* dir: -1-上一月， 1-下一月
+*/
+function updateCalendarDate($weeks, dir) {
+  var $start_in_month = $(".in-month:first");
+  var next_month_start = new Date(Number($start_in_month.attr("name")));
+  next_month_start.setMonth(next_month_start.getMonth() + dir);
+
+  var center_pos = 12;
+  var day_time = 86400000;
+  var week_time = day_time * 7;
+  var current_start_time = getStartWeekTime(next_month_start.getTime().toString());
+  var current_show_month = parseTime(current_start_time);
+
+  //清空.in-month类的day-cell元素
+  $(".in-month").removeClass("in-month");
+  $(".mweek .today").removeClass("today");
+
+  $weeks.each(function(page) {
+    var $self = $(this);
+    $self.attr("name", current_start_time + (page - center_pos) * week_time);
+    $self.children().each(function(index) {
+      var name_attr = Number($self.attr("name")) + index * day_time;
+      $(this).attr("name", name_attr);
+      $(this).find(".date").text(isFirstDay(name_attr) +
+                                 isLastDay(name_attr) +
+                                 parseTime(name_attr).date);
+
+      // 月视图下需要当前显示月添加.in-month类样式，加深背景色以示区分
+      var date_daycell = parseTime(name_attr);
+      if ((date_daycell.year == current_show_month.year) &&
+         (date_daycell.month == current_show_month.month)) {
+        $(this).addClass("in-month");
+      }
+
+      // 更新today样式到新的元素
+      if (name_attr == parseToday().time) {
+        $(this).addClass("today");
+      }
+    });
+  });
+
+
+  // 更新calendar-tile信息
+  setMonthTitle(current_start_time);
+  // 设置scroll-bar的位置使当天能够显示出来
+  setScrollTop(12);
+
 }
