@@ -71,20 +71,26 @@ $(function() {
   // 月视图下点击某一天扩展显示
   $(".calendar-month-view").on("click", ".js-expand-day", function() {
     // 首先删除当前的active元素扩展显示
-    $(".js-expand-day.active").removeClass("active");
-    $(this).addClass("active");  // 该元素扩展显示
+      $(".js-expand-day.active").removeClass("active")
+	  .find(".card-info").addClass("hide");
+      $(this).addClass("active")  // 该元素扩展显示
+          .find(".card-info").removeClass("hide");
   });
 
   // 周视图下点击某一天扩展显示
   $(".calendar-week-view").on("click", ".js-expand-day", function() {
     // 首先删除当前的active元素扩展显示
-    $(".js-expand-day.active").removeClass("active");
-    $(this).addClass("active");  // 该元素扩展显示
+      $(".js-expand-day.active").removeClass("active")
+	  .find(".card-info").addClass("hide");
+
+      $(this).addClass("active")  // 该元素扩展显示
+	  .find(".card-info").removeClass("hide");
   });
 
   // 通过关闭按钮关闭某一天的扩展显示
   $(".calendar-content").on("click", ".close-btn", function() {
-    $(this).parent().parent().removeClass("active");
+      $(this).parent().parent().removeClass("active")
+	  .find(".card-info").addClass("hide");
   });
 
   // 周视图、月视图某日扩展下点击预定会议室链接弹出预定会议室弹出框，采用事件委托方式
@@ -244,5 +250,23 @@ $(function() {
   $(".js-select-list").on("change", function(e) {
     $(this).prev().text(this.value);
   });
+
+    // 会议室预定按钮点击处理效果
+    $(".btn-book-meeting").on("click", function(e) {
+	var meeting_card_template =
+	    "<div class=meeting-card>" +
+	        "<div class=card-title>{{title}}</div>" +
+	        "<div class=card-info>" +
+	           "<div><span class='badge badge-normal'>{{room}}</span></div>" + 
+	           "<span class='badge badge-danger'>{{start}}</span><span class=badge>{{end}}</span>" +
+	        "</div>" +
+                  "</div>";
+
+	meeting_card_template = meeting_card_template.replace(/{{title}}/, $(".input-meeting-title").val());
+	meeting_card_template = meeting_card_template.replace(/{{room}}/, $(".js-list-value").eq(0).text());
+	meeting_card_template = meeting_card_template.replace(/{{start}}/, $(".js-list-value").eq(1).text());
+	meeting_card_template = meeting_card_template.replace(/{{end}}/, $(".js-list-value").eq(2).text());
+	$(".calendar-day.active .meeting-lists").append(meeting_card_template);
+    });
 
 });
