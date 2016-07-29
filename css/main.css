@@ -330,8 +330,14 @@ header .row {
   position: absolute;
   top: 34px;
   left: 8px;
-  right: 3px;
-  bottom: 42px;
+  right: 5px;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.calendar-day.active .meeting-lists {
+  bottom: 34px;
 }
 
 .calendar-day .link-book-meeting {
@@ -513,4 +519,30 @@ header .row {
 
 .today {
   background-color: #ede5cf;
+}
+
+/* 日历中显示的会议室是预定信息样式定义 */
+.meeting-card {
+    margin: 0 0 5px 0;
+    padding: 4px;
+    border-bottom: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff;
+}
+
+.card-title {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.badge-normal {
+    background-color: #5cb85c;
+}
+
+.badge-warning {
+    background-color: #f0ad4e;
+}
+
+.badge-danger {
+    background-color: #d9534f;
 }
