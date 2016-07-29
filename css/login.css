@@ -1,0 +1,14 @@
+/* 通用样式 */
+body {
+  margin: 0;
+  background-color: #fff;
+}
+
+/*header样式*/
+header {
+  height: 49px;
+  border-bottom: 1px solid #bac2cc;
+  border-bottom-color: #bdc8d4;
+  box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  background-color: #e0e9f1;
+}
