@@ -3,6 +3,8 @@ $(function() {
   var el_signin = document.querySelector("a.signin");
   var form_signup = document.getElementsByClassName("signup-form")[0];
   var form_signin = document.getElementsByClassName("signin-form")[0];
+  var input_rember_me = document.querySelector("input[name=rember-me]");
+  var lb_rember_me = document.querySelector("label[for=rember-me]");
 
   // 判断某个dom元素是否包含某个类名
   function hasClass(element, name) {
@@ -41,5 +43,10 @@ $(function() {
       form_signup.className += " hide";
       el_signup.className = el_signup.className.replace(/ active/g, "");
     }
+  });
+
+  // 登录选项，点击label-"记住我"也设置为checkbox切换选中功能
+  lb_rember_me.addEventListener("click", function() {
+    input_rember_me.checked = !input_rember_me.checked;
   });
 });
