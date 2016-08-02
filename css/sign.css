@@ -1,10 +1,20 @@
 /* 通用样式 */
+html {
+  height: 100%;
+}
+
 body {
-  margin: 120px auto 0;
+  margin: 0 auto;
   width: 360px;
+  height: 100%;
+  min-height: 545px;
   font-family: 'Helvetica Neue',Helvetica,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',Arial,sans-serif;
   color: #555;
   background-color: #f7fafc;
+}
+
+header {
+  padding-top: 120px;
 }
 
 h1 {
@@ -115,6 +125,9 @@ a:active {
 
 
 .signup-or-signin {
+  box-sizing: border-box;
+  height: 100%;
+  padding-bottom: 42px;
   text-align: center;
 }
 
@@ -122,4 +135,14 @@ a:active {
 .signin-input {
   border: 1px solid #d5d5d5;
   border-radius: 3px;
+}
+
+footer {
+  position: relative;
+  margin-top: -42px;
+  height: 42px;
+  text-align: center;
+  line-height: 42px;
+  font-size: 0.8em;
+  color: #555;
 }
