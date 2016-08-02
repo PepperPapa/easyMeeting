@@ -210,10 +210,13 @@ $(function() {
 
   // 周视图回到今天按钮点击处理
   $(".back-to-today").on("click", function() {
-    // week视图下日历title、日期、当天背景颜色等初始化
-    initCalendarDate($(".week"), 2, "week");
-    // month视图下日历title、日期、当前背景颜色等初始化
-    initCalendarDate($(".mweek"), 12, "month");
+    if (!$(".calendar-week-view").hasClass("hide")) {
+      // week视图下日历title、日期、当天背景颜色等初始化
+      initCalendarDate($(".week"), 2, "week");
+    } else {
+      // month视图下日历title、日期、当前背景颜色等初始化
+      initCalendarDate($(".mweek"), 12, "month");
+    }
   });
 
   // 月视图下.scroll-bar-ver的scroll事件处理
