@@ -1,24 +1,15 @@
 # -*- coding: utf-8 -*-
-# python3.5
+#!/usr/bin/python3
 # ubuntu16.04LTS
-import cgi
+
+from cgi import db
 
 def application(environ, start_response):
     start_response('200 OK', [('Content-Type','text/html')])
-    html = "<h1>Hello World From Python</h1>\n"
-    html += "<table>\n"
-    for k, v in environ.items():
-        html += "<tr><td>{}</td><td>{}</td></tr>\n".format(k, v)
-    html += "</table>\n"
 
-    html += "<form>\n"
-    html += "<input name=txt>\n"
-    html += "<input type=submit value=echo>\n"
-    html += "</form>\n"
-
-    form  = cgi.FieldStorage(environ = environ)
-    print(form, type(form))
-    if 'txt' in form:
-        html += "<hr><p>You said: <b>{}</b></p>".format(form['txt'].value)
+    user = db.dbtest()
+    
+    html = "<h1>{}</h1><p>{}</p>".format(user[0], user[1])
 
     return [html.encode("utf-8")]
+
