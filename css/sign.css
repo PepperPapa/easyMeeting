@@ -46,7 +46,8 @@ input {
   outline: none;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="password"] {
   display: block;
   height: 47px;
   width: 100%;

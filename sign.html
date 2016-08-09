@@ -20,14 +20,17 @@
         <a href="#" class="signin">登录</a>
       </div>
       <div class="sign-form">
-        <form action="#" class="signup-form">
+	<!-- 注册  -->
+        <form action="/signup" class="signup-form">
           <div class="signup-input">
-            <input type="text" placeholder="用户名">
-            <input type="text" placeholder="密码">
-            <input type="text" placeholder="重复输入密码">
+            <input type="text" name="username" placeholder="用户名">
+            <input type="password" name="password" placeholder="密码">
+            <input type="password" name="re-password" placeholder="重复输入密码">
           </div>
           <button class="btn btn-signup" type="submit">注册</button>
         </form>
+
+	<!-- 登录  -->
         <form action="#" class="signin-form hide">
           <div class="signin-input">
             <input type="text" placeholder="用户名">
