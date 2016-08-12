@@ -37,7 +37,8 @@ def insertNewUser(name, pwd, repeate_pwd):
         cursor.execute("SELECT * FROM users WHERE NAME='{}'".format(name))
         user = cursor.fetchone()
         conn.close()
-        return user
+        # s_: 表示已经加密处理
+        return {'name': user[0], 's_password': user[1]}
 
 if __name__ == '__main__':
     print(insertNewUser("zx", "1234", "1234"))

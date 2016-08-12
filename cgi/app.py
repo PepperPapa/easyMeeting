@@ -8,13 +8,14 @@ else:
     from cgi import db
 
 def handleSignup(environ):
-    query_string = environ['QUERY_STRING']
-    user_info = [item.split('=')[1] for item in query_string.split('&')]
-    new_user = db.insertNewUser(user_info[0], user_info[1], user_info[2])
-    if new_user:
-        return "sucess, name is %s" % new_user[0]
-    else:
-        return "user already exist!"
+    json_body_length = int(environ['CONTENT_LENGTH'])
+    json_body = environ['wsgi.input'].read(json_body_length).decode('utf-8')
+    import json
+    # json format- {name: xx, password: xx, verify: xx}
+    json_body = json.loads(json_body)
+
+    new_user = db.insertNewUser(json_body['name'], json_body['password'], json_body['verify'])
+    return json.dumps(new_user)
 
 def showEnviron(environ):
     html = "<table>\n"		
@@ -24,14 +25,12 @@ def showEnviron(environ):
     return html
 
 def application(environ, start_response):
-    start_response('200 OK', [('Content-Type','text/html')])
-
     url = environ['PATH_INFO']
     if url == "/signup":
-        html = handleSignup(environ)
-        html += showEnviron(environ)
-
-    return [html.encode("utf-8")]
+        start_response('200 OK', [('Content-Type','text/plain;charset="utf-8"')])
+        body = handleSignup(environ)
+        #html += showEnviron(environ)
+        return [body.encode("utf-8")]
 
 if __name__ == '__main__':
     print(handleSignup({'QUERY_STRING': 'username=zx123&password=1234&re-password=1234'}))
