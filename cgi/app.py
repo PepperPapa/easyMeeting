@@ -3,13 +3,20 @@
 # ubuntu16.04LTS
 
 import json
+import time
+import datetime
 
 if __name__ == '__main__':
     import db
 else:
     from cgi import db
 
-
+def getOneMonthExpires():
+    t = datetime.datetime.now()
+    t = datetime.datetime(t.year, t.month + 1, t.day)
+    t = t.timestamp()
+    return time.strftime("%A, %d-%b-%y %H:%M:%S GMT", time.localtime(t))
+    
 def handleSignup(environ):
     json_body_length = int(environ['CONTENT_LENGTH'])
     json_body = environ['wsgi.input'].read(json_body_length).decode('utf-8')
@@ -26,7 +33,7 @@ def handleSignin(environ):
     json_body = json.loads(json_body)
 
     new_user = db.loginUser(json_body['name'], json_body['password'])
-    return json.dumps(new_user)
+    return new_user
     
 def showEnviron(environ):
     html = "<table>\n"		
@@ -43,10 +50,19 @@ def application(environ, start_response):
         #html += showEnviron(environ)
         return [body.encode("utf-8")]
     elif url == "/signin":
-        start_response('200 OK', [('Content-Type','application/json;charset="utf-8"')])
         body = handleSignin(environ)
         #html += showEnviron(environ)
+
+        # 登录成功则发送cookie到client保存用户名和密码信息
+        # TODO: 密码需加密处理
+        headers = [('Content-Type','application/json;charset="utf-8"')]
+        if body:
+            headers.append(('Set-Cookie', 'name="{}";Expires={}'.format(body['name'], getOneMonthExpires())))
+            headers.append(('Set-Cookie', 's_password="{}";Expires={}'.format(body['s_password'], getOneMonthExpires())))
+
+        start_response('200 OK', headers)
+        body = json.dumps(body)
         return [body.encode("utf-8")]
 
 if __name__ == '__main__':
-    print(handleSignup({'QUERY_STRING': 'username=zx123&password=1234&re-password=1234'}))
+    print(getOneMonthExpires())
