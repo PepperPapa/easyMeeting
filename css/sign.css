@@ -68,12 +68,13 @@ a:active {
   margin-bottom: 20px;
 }
 
-.signup,
-.signin {
+.to-signup,
+.to-signin {
   display: inline-block;
   margin: 0 30px;
   font-size: 1.2em;
   line-height: 35px;
+  cursor: pointer;
 }
 
 .active {
@@ -136,6 +137,7 @@ a:active {
 .signin-input {
   border: 1px solid #d5d5d5;
   border-radius: 3px;
+  margin-bottom: 5px;
 }
 
 footer {

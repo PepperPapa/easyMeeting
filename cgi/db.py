@@ -22,11 +22,11 @@ def createUserTable():
     return (conn, cursor)
 
 
-def insertNewUser(name, pwd, repeate_pwd):
+def createUser(name, pwd, repeate_pwd):
     # 如果users不存在则首先创建表users
     conn, cursor = createUserTable()
 
-    # TODO: 用户名格式和密码格式校验
+    # TODO: 用户名格式和密码格式校验, 密码重复验证
     # TODO: 密码的加密处理
     # 检查name是否存在，不存在才能插入值
     cursor.execute("SELECT NAME FROM users WHERE NAME='{}'".format(name))
@@ -40,5 +40,13 @@ def insertNewUser(name, pwd, repeate_pwd):
         # s_: 表示已经加密处理
         return {'name': user[0], 's_password': user[1]}
 
+def loginUser(name, pwd):
+    conn, cursor = connectDatabase()
+    cursor.execute("SELECT * FROM users WHERE NAME='{}'".format(name))
+    query_user = cursor.fetchone()
+    if query_user:
+        if (name == query_user[0] and pwd == query_user[1]):
+            return {'name': query_user[0], 's_password': query_user[1]}
+    
 if __name__ == '__main__':
-    print(insertNewUser("zx", "1234", "1234"))
+    print(createUser("zx", "1234", "1234"))
