@@ -61,7 +61,8 @@ $(function() {
   });
 
   /*
-   * 点击注册按钮处理：ajax请求发往server端进行注册，server端返回json数据传达注册是否成功的信息
+   * 点击注册按钮处理：ajax请求发往server端进行注册，server端返回json数据传达
+   * 注册是否成功的信息
    */
   $(".btn-signup").on("click", function() {
     // 获取注册信息
@@ -100,14 +101,16 @@ $(function() {
   }
 
   /*
-   * 点击登录按钮处理：ajax请求发往server端进行登录处理，登录成功跳转到index.html页面，失败进行错误提示
+   * 点击登录按钮处理：ajax请求发往server端进行登录处理，登录成功跳转到
+   * index.html页面，失败进行错误提示
    */
   $(".btn-signin").on("click", function() {
      // 获取登录信息
     var signin_info = {};
     signin_info.name = $(".signin-input input").eq(0).val();
-    signin_info.password = $(".signin-input input").eq(1).val();
-
+    signin_info.s_password = $(".signin-input input").eq(1).val();
+    signin_info.rember_me = document.querySelector("input[name=rember-me").checked;
+    
     // 发送ajax请求到server进行用户登录
     $.ajax({
       method: "POST",
@@ -117,6 +120,9 @@ $(function() {
     }).done(function(response_body) {
       // 登录成功则切换至index.html页面并显示在index.html页面显示用户信息
       if (response_body !== null) {
+	// 登录成功增加登录状态的cookie信息
+	document.cookie = "islogin=true";
+	// 跳转到主页面，主页面通过cookie信息刷新用户信息
 	redirect("/index.html");
       // 登录失败则给出错误提示"用户名或密码错误..."
       } else {

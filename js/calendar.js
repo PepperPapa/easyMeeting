@@ -10,7 +10,7 @@ $(function() {
   /*
    * 根据calendar相关dom元素的name属性解析相应的日期信息：年、月、日
    * name_attr: 日期的毫秒字符串表示，如"1470931200000"
-   */ 
+   */
   function parseTime(name_attr) {
     var date = new Date(Number(name_attr));
     return {
@@ -276,23 +276,36 @@ $(function() {
    * 加载index.html页面检查cookie信息确定用户名和登录状态
    * cookie需包含两条选项：username, islogin
    */
-  function checkCookie() {
+  function updateUserFromCookie() {
+    // 读取cookie
     var cookie = document.cookie;
+
     if (cookie.length > 0) {
+      // 解析cookie为hash形式对象
       cookie = cookie.split(";");
       var dict_cookie = {};
       cookie.map(function(item) {
-	var tem = item.trim().split("=");
-	dict_cookie[tem[0]] = tem[1];
+        var tem = item.trim().split("=");
+        dict_cookie[tem[0]] = tem[1];
       });
 
-      $("a.register").text(dict_cookie.name);
-      $("a.login").text("注销");
-      return dict_cookie;
+      if (JSON.parse(dict_cookie.islogin)) {
+	$("a.register").text(dict_cookie.name)
+	               .attr("href", "#");
+	$("a.login").text("注销");
+      }
     }
   }
-  console.log(checkCookie());
   
+  updateUserFromCookie();
+
+  // 注销登录处理(仅修改islogin的状态为false)
+  $("a.login").on("click", function() {
+    if (this.text === "注销") {
+      document.cookie = "islogin=false";
+    }
+  });
+
   // 根据浏览器窗口变化动态计算week视图下的各元素宽度
   $(window).on("resize", function() {
     // 获取.calendar-week-view元素的当前宽度

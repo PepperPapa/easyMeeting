@@ -23,7 +23,9 @@ def handleSignup(environ):
     # json format- {name: xx, password: xx, verify: xx}
     json_body = json.loads(json_body)
 
-    new_user = db.createUser(json_body['name'], json_body['password'], json_body['verify'])
+    new_user = db.createUser(json_body['name'],
+                             json_body['password'],
+                             json_body['verify'])
     return json.dumps(new_user)
 
 def handleSignin(environ):
@@ -32,8 +34,10 @@ def handleSignin(environ):
     # json format- {name: xx, password: xx, verify: xx}
     json_body = json.loads(json_body)
 
-    new_user = db.loginUser(json_body['name'], json_body['password'])
-    return new_user
+    # TODO: 返回值需要重新考虑
+    new_user = db.loginUser(json_body['name'], json_body['s_password'])
+    if new_user:
+        return json_body
     
 def showEnviron(environ):
     html = "<table>\n"		
@@ -45,7 +49,8 @@ def showEnviron(environ):
 def application(environ, start_response):
     url = environ['PATH_INFO']
     if url == "/signup":
-        start_response('200 OK', [('Content-Type','application/json;charset="utf-8"')])
+        start_response('200 OK',
+                       [('Content-Type','application/json;charset="utf-8"')])
         body = handleSignup(environ)
         #html += showEnviron(environ)
         return [body.encode("utf-8")]
@@ -57,8 +62,16 @@ def application(environ, start_response):
         # TODO: 密码需加密处理
         headers = [('Content-Type','application/json;charset="utf-8"')]
         if body:
-            headers.append(('Set-Cookie', 'name="{}";Expires={}'.format(body['name'], getOneMonthExpires())))
-            headers.append(('Set-Cookie', 's_password="{}";Expires={}'.format(body['s_password'], getOneMonthExpires())))
+            if body["rember_me"]:
+                headers.append(('Set-Cookie',
+                                'name={};Expires={}'
+                                .format(body['name'], getOneMonthExpires())))
+                headers.append(('Set-Cookie',
+                                's_password={};Expires={}'
+                                .format(body['s_password'], getOneMonthExpires())))
+            else:
+                headers.append(('Set-Cookie', 'name={}'.format(body['name'])))
+                headers.append(('Set-Cookie', 's_password={}'.format(body['s_password'])))
 
         start_response('200 OK', headers)
         body = json.dumps(body)
