@@ -272,32 +272,83 @@ $(function() {
   }
 
 
+  function getCookie() {
+    // 读取cookie
+    var cookie = document.cookie;
+    var dict_cookie = {};
+    
+    if (cookie.length > 0) {
+      // 解析cookie为hash形式对象
+      cookie = cookie.split(";");
+      cookie.map(function(item) {
+        var tem = item.trim().split("=");
+        dict_cookie[tem[0]] = tem[1];
+      });
+    }
+    return dict_cookie;
+  }
+
   /*
    * 加载index.html页面检查cookie信息确定用户名和登录状态
    * cookie需包含两条选项：username, islogin
    */
   function updateUserFromCookie() {
     // 读取cookie
-    var cookie = document.cookie;
+    var cookie = getCookie();
 
-    if (cookie.length > 0) {
-      // 解析cookie为hash形式对象
-      cookie = cookie.split(";");
-      var dict_cookie = {};
-      cookie.map(function(item) {
-        var tem = item.trim().split("=");
-        dict_cookie[tem[0]] = tem[1];
-      });
-
-      if (JSON.parse(dict_cookie.islogin)) {
-	$("a.register").text(dict_cookie.name)
-	               .attr("href", "#");
-	$("a.login").text("注销");
-      }
+    if ("name" in cookie) {
+      if (cookie.name.length > 0) {
+	if (JSON.parse(cookie.islogin)) {
+	  $("a.register").text(cookie.name)
+	    .attr("href", "#");
+	  $("a.login").text("注销");
+	}
+    }
     }
   }
+
+  /*
+   * 跳转到path指定的页面
+   */
+  function redirect(path) {
+    window.location.pathname = path;
+  }
   
-  updateUserFromCookie();
+  function requestLogin(data) {
+    $.ajax({
+      method: "POST",
+      url: "/signin",
+      contentType: "application/json;charset='utf-8'",
+      data: JSON.stringify(data)
+    }).done(function(response_body) {
+      // 登录成功则切换至index.html页面并显示在index.html页面显示用户信息
+      if (response_body !== null) {
+	// 登录成功增加登录状态的cookie信息
+	document.cookie = "islogin=true";
+	updateUserFromCookie();
+	// 登录失败则给出错误提示"用户名或密码错误..."
+      } else {
+	redirect("/sign.html");
+      }
+    });
+  }
+
+  function autoLogin() {
+    // 读取cookie
+    var cookie = getCookie();
+    cookie.rember_me = true;
+    
+    if ("name" in cookie) {
+      if (cookie.name.length > 0) {
+	// 发送ajax请求到server进行用户登录
+	requestLogin(cookie);
+      }
+    } else {
+      redirect("/sign.html");
+    }
+  }
+
+  autoLogin()
 
   // 注销登录处理(仅修改islogin的状态为false)
   $("a.login").on("click", function() {

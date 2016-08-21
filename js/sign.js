@@ -17,6 +17,7 @@ $(function() {
     return false;
   }
 
+
   // 点击注册进入注册页面处理
   el_signup.addEventListener("click", function() {
     if (hasClass(form_signup, "hide")) {
@@ -100,6 +101,27 @@ $(function() {
     window.location.pathname = path;
   }
 
+  function requestLogin(data) {
+    $.ajax({
+      method: "POST",
+      url: "/signin",
+      contentType: "application/json;charset='utf-8'",
+      data: JSON.stringify(data)
+    }).done(function(response_body) {
+      // 登录成功则切换至index.html页面并显示在index.html页面显示用户信息
+      if (response_body !== null) {
+	// 登录成功增加登录状态的cookie信息
+	document.cookie = "islogin=true";
+	// 跳转到主页面，主页面通过cookie信息刷新用户信息
+	redirect("/index.html");
+	// 登录失败则给出错误提示"用户名或密码错误..."
+      } else {
+	$(".signin-form .alert").text("用户名或密码错误...")
+	  .addClass("alert-warning").removeClass("hide");	
+      }
+    });
+  }
+  
   /*
    * 点击登录按钮处理：ajax请求发往server端进行登录处理，登录成功跳转到
    * index.html页面，失败进行错误提示
@@ -112,23 +134,6 @@ $(function() {
     signin_info.rember_me = document.querySelector("input[name=rember-me").checked;
     
     // 发送ajax请求到server进行用户登录
-    $.ajax({
-      method: "POST",
-      url: "/signin",
-      contentType: "application/json;charset='utf-8'",
-      data: JSON.stringify(signin_info)
-    }).done(function(response_body) {
-      // 登录成功则切换至index.html页面并显示在index.html页面显示用户信息
-      if (response_body !== null) {
-	// 登录成功增加登录状态的cookie信息
-	document.cookie = "islogin=true";
-	// 跳转到主页面，主页面通过cookie信息刷新用户信息
-	redirect("/index.html");
-      // 登录失败则给出错误提示"用户名或密码错误..."
-      } else {
-	$(".signin-form .alert").text("用户名或密码错误...")
-	  .addClass("alert-warning").removeClass("hide");	
-      }
-    });
+    requestLogin(signin_info);
   });
 });
