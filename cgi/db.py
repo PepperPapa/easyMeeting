@@ -3,18 +3,22 @@
 # ubuntu16.04LTS
 
 import sqlite3
+import time
 
 def connectDatabase():
     conn = sqlite3.connect("/home/zx/projects/easyMeeting/cgi/easymeeting.db")
     return (conn, conn.cursor())
-    
+
+"""
+用户注册、登录等相关
+"""
 def createUserTable():
     conn, cursor = connectDatabase()
-    
+
     # get all table name in database
     cursor.execute("SELECT NAME FROM sqlite_master WHERE TYPE='table'")
     table_list = [name[0] for name in cursor.fetchall()]
-    
+
     if not 'users' in table_list:
         cursor.execute("""CREATE TABLE users
                  (NAME TEXT PRIMARY KEY NOT NULL,
@@ -47,6 +51,56 @@ def loginUser(name, pwd):
     if query_user:
         if (name == query_user[0] and pwd == query_user[1]):
             return {'name': query_user[0], 's_password': query_user[1]}
-    
+
+
+"""
+预定会议相关
+"""
+def createMeetingTable():
+    conn, cursor = connectDatabase()
+
+    # query all tables name in database
+    cursor.execute("SELECT NAME FROM sqlite_master WHERE TYPE='table'")
+    table_list = [name[0] for name in cursor.fetchall()]
+
+    if not "meetings" in table_list:
+        cursor.execute("""CREATE TABLE meetings
+                        (ID INT PRIMARY KEY NOT NULL,
+                         TIMESTAMP TEXT NOT NULL,
+                         TITLE TEXT NOT NULL,
+                         ROOM TEXT NOT NULL,
+                         START TEXT NOT NULL,
+                         END TEXT NOT NULL);""")
+    return (conn, cursor)
+
+def addMeeting(timestamp, title, room, start, end):
+    id = int(time.time() * 10000000)
+    # 如果meetings不存在则首先创建表meetings
+    conn, cursor = createMeetingTable()
+
+    # 首先查询是否有重复的会议室预定数据，无则增加，否则返回None
+    cursor.execute(""" SELECT * FROM meetings
+            WHERE TIMESTAMP='{}' and
+                  TITLE='{}' and
+                  START='{}' and
+                  END='{}'""".format(timestamp, title, room, start, end))
+    if not cursor.fetchone():
+        cursor.execute("""INSERT INTO meetings (ID, TIMESTAMP, TITLE, ROOM, START, END)
+                       VALUES ('{}', '{}', '{}', '{}', '{}', '{}')"""
+                              .format(id, timestamp, title, room, start, end))
+        conn.commit()
+        cursor.execute("SELECT * FROM meetings WHERE ID={}".format(id))
+        meeting = cursor.fetchone()
+        conn.close()
+        # s_: 表示已经加密处理
+        return {
+            "id": meeting[0],
+            "timestamp": meeting[1],
+            "title": meeting[2],
+            "room": meeting[3],
+            "start": meeting[4],
+            "end": meeting[5]
+        }
+
 if __name__ == '__main__':
-    print(createUser("zx", "1234", "1234"))
+    print(addMeeting("1470844800001", "例会2", "room9", "11:00", "12:00"))

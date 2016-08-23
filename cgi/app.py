@@ -11,12 +11,15 @@ if __name__ == '__main__':
 else:
     from cgi import db
 
+"""
+用户登录、注册相关
+"""
 def getOneMonthExpires():
     t = datetime.datetime.now()
     t = datetime.datetime(t.year, t.month + 1, t.day)
     t = t.timestamp()
     return time.strftime("%A, %d-%b-%y %H:%M:%S GMT", time.localtime(t))
-    
+
 def handleSignup(environ):
     json_body_length = int(environ['CONTENT_LENGTH'])
     json_body = environ['wsgi.input'].read(json_body_length).decode('utf-8')
@@ -38,13 +41,31 @@ def handleSignin(environ):
     new_user = db.loginUser(json_body['name'], json_body['s_password'])
     if new_user:
         return json_body
-    
+
+"""
+预定会议室相关
+"""
+def handleAddMeeting(environ):
+    json_body_length = int(environ['CONTENT_LENGTH'])
+    json_body = environ['wsgi.input'].read(json_body_length).decode('utf-8')
+    # json format-
+    #      {timestamp: xx, title: xx, room: xx, start: xx, end: xx}
+    json_body = json.loads(json_body)
+    new_meeting = db.addMeeting(json_body["timestamp"],
+                                json_body["title"],
+                                json_body["room"],
+                                json_body["start"],
+                                json_body["end"])
+    if new_meeting:
+        return json.dumps(json_body)
+
 def showEnviron(environ):
-    html = "<table>\n"		
-    for k, v in environ.items():		
+    html = "<table>\n"
+    for k, v in environ.items():
         html += "<tr><td>{}</td><td>{}</td></tr>\n".format(k, v)
     html += "</table>\n"
     return html
+
 
 def application(environ, start_response):
     url = environ['PATH_INFO']
@@ -75,6 +96,12 @@ def application(environ, start_response):
 
         start_response('200 OK', headers)
         body = json.dumps(body)
+        return [body.encode("utf-8")]
+    elif url == "/addmeeting":
+        start_response('200 OK',
+                       [('Content-Type','application/json;charset="utf-8"')])
+        body = handleAddMeeting(environ)
+        #html += showEnviron(environ)
         return [body.encode("utf-8")]
 
 if __name__ == '__main__':

@@ -276,7 +276,7 @@ $(function() {
     // 读取cookie
     var cookie = document.cookie;
     var dict_cookie = {};
-    
+
     if (cookie.length > 0) {
       // 解析cookie为hash形式对象
       cookie = cookie.split(";");
@@ -313,7 +313,7 @@ $(function() {
   function redirect(path) {
     window.location.pathname = path;
   }
-  
+
   function requestLogin(data) {
     $.ajax({
       method: "POST",
@@ -337,7 +337,7 @@ $(function() {
     // 读取cookie
     var cookie = getCookie();
     cookie.rember_me = true;
-    
+
     if ("name" in cookie) {
       if (cookie.name.length > 0) {
 	// 发送ajax请求到server进行用户登录
@@ -620,5 +620,28 @@ $(function() {
     meeting_card_template = meeting_card_template.replace(/{{start}}/, $(".js-list-value").eq(1).text());
     meeting_card_template = meeting_card_template.replace(/{{end}}/, $(".js-list-value").eq(2).text());
     $(".calendar-day.active .meeting-lists").append(meeting_card_template);
+
+
+    var meeting_info = {};
+    meeting_info.timestamp = $(".active").parent().attr("name");
+    meeting_info.title = $(".input-meeting-title").val();
+    meeting_info.room = $(".js-list-value").eq(0).text();
+    meeting_info.start = $(".js-list-value").eq(1).text();
+    meeting_info.end = $(".js-list-value").eq(2).text();
+
+    // 发送ajax请求到server进行用户注册
+    $.ajax({
+      method: "POST",
+      url: "/addmeeting",
+      contentType: "application/json;charset='utf-8'",
+      data: JSON.stringify(meeting_info)
+    }).done(function(response_body) {
+      // 注册成功则切换至登录页面并自动补全用户名和密码
+      if (response_body !== null) {
+        console.log("预定会议室成功！");
+      } else {
+        console.log("预定会议室失败！");
+      }
+    });
   });
 });
