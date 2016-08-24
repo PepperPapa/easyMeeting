@@ -82,6 +82,7 @@ def addMeeting(timestamp, title, room, start, end):
     cursor.execute(""" SELECT * FROM meetings
             WHERE TIMESTAMP='{}' and
                   TITLE='{}' and
+                  ROOM='{}' and
                   START='{}' and
                   END='{}'""".format(timestamp, title, room, start, end))
     if not cursor.fetchone():
@@ -103,4 +104,4 @@ def addMeeting(timestamp, title, room, start, end):
         }
 
 if __name__ == '__main__':
-    print(addMeeting("1470844800001", "例会2", "room9", "11:00", "12:00"))
+    print(addMeeting("1470844800001", "例会23", "room9", "11:00", "12:00"))

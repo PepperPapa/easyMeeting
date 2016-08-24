@@ -56,8 +56,7 @@ def handleAddMeeting(environ):
                                 json_body["room"],
                                 json_body["start"],
                                 json_body["end"])
-    if new_meeting:
-        return json.dumps(json_body)
+    return new_meeting
 
 def showEnviron(environ):
     html = "<table>\n"
@@ -102,7 +101,7 @@ def application(environ, start_response):
                        [('Content-Type','application/json;charset="utf-8"')])
         body = handleAddMeeting(environ)
         #html += showEnviron(environ)
-        return [body.encode("utf-8")]
+        return [json.dumps(body).encode("utf-8")]
 
 if __name__ == '__main__':
     print(getOneMonthExpires())
