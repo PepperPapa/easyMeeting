@@ -58,6 +58,17 @@ def handleAddMeeting(environ):
                                 json_body["end"])
     return new_meeting
 
+def handleQueryMeeting(environ):
+    json_body_length = int(environ['CONTENT_LENGTH'])
+    json_body = environ['wsgi.input'].read(json_body_length).decode('utf-8')
+    # json format-
+    #      {start_timestamp: xx, end_timestamp: xx}
+    json_body = json.loads(json_body)
+    print(json_body)
+    meetings = db.queryMeetings(json_body["start_timestamp"],
+                                json_body["end_timestamp"])
+    return meetings
+
 def showEnviron(environ):
     html = "<table>\n"
     for k, v in environ.items():
@@ -100,6 +111,12 @@ def application(environ, start_response):
         start_response('200 OK',
                        [('Content-Type','application/json;charset="utf-8"')])
         body = handleAddMeeting(environ)
+        #html += showEnviron(environ)
+        return [json.dumps(body).encode("utf-8")]
+    elif url == "/querymeetings":
+        start_response('200 OK',
+                       [('Content-Type','application/json;charset="utf-8"')])
+        body = handleQueryMeeting(environ)
         #html += showEnviron(environ)
         return [json.dumps(body).encode("utf-8")]
 

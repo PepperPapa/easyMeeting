@@ -348,6 +348,24 @@ $(function() {
     }
   }
 
+  /*
+   * ajax方式从server端请求会议室预定数据，查询范围为index页面日历时间的起始和结束
+   */
+  function queryMeetings() {
+    var range_timestamp = {};
+    range_timestamp.start_timestamp = $("td").eq(0).attr("name");
+    range_timestamp.end_timestamp = $("td").eq(-1).attr("name");
+
+    $.ajax({
+      method: "POST",
+      url: "/querymeetings",
+      contentType: "application/json;charset='utf-8'",
+      data: JSON.stringify(range_timestamp)
+    }).done(function(response_body) {
+      console.log(response_body);
+    });
+  }
+
   autoLogin();
 
   // 注销登录处理(仅修改islogin的状态为false)
@@ -646,4 +664,7 @@ $(function() {
       }
     });
   });
+
+  // ajax方式请求server端返回预定会议室的数据
+  queryMeetings();
 });
