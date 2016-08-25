@@ -348,6 +348,24 @@ $(function() {
     }
   }
 
+  function meetingCardFormat(ishide, title, room, start, end) {
+    var meeting_card_template =
+    "<div class=meeting-card>" +
+        "<div class=card-title>{{title}}</div>" +
+        "<div class='card-info {{ishide}}'>" +
+          "<div><span class='badge badge-normal'>{{room}}</span></div>" +
+          "<span class='badge badge-danger'>{{start}}</span><span class=badge>{{end}}</span>" +
+          "</div>" +
+      "</div>";
+
+    meeting_card_template = meeting_card_template.replace(/{{ishide}}/, ishide);
+    meeting_card_template = meeting_card_template.replace(/{{title}}/, title);
+    meeting_card_template = meeting_card_template.replace(/{{room}}/, room);
+    meeting_card_template = meeting_card_template.replace(/{{start}}/, start);
+    meeting_card_template = meeting_card_template.replace(/{{end}}/, end);
+    return meeting_card_template;
+  }
+
   /*
    * ajax方式从server端请求会议室预定数据，查询范围为index页面日历时间的起始和结束
    */
@@ -361,8 +379,15 @@ $(function() {
       url: "/querymeetings",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(range_timestamp)
-    }).done(function(response_body) {
-      console.log(response_body);
+    }).done(function(response_meetings) {
+      console.log(response_meetings);
+
+      response_meetings.forEach(function(meeting) {
+        var meeting_card = meetingCardFormat("hide", meeting[2], meeting[3],
+                                         meeting[4], meeting[5]);
+        $("td[name=" + meeting[1] + "] .meeting-lists")
+                                  .append(meeting_card);
+      });
     });
   }
 
@@ -624,15 +649,6 @@ $(function() {
 
   // 会议室预定按钮点击处理效果
   $(".btn-book-meeting").on("click", function(e) {
-    var meeting_card_template =
-    "<div class=meeting-card>" +
-        "<div class=card-title>{{title}}</div>" +
-        "<div class=card-info>" +
-          "<div><span class='badge badge-normal'>{{room}}</span></div>" +
-          "<span class='badge badge-danger'>{{start}}</span><span class=badge>{{end}}</span>" +
-          "</div>" +
-      "</div>";
-
     var meeting_info = {};
     meeting_info.timestamp = $(".active").parent().attr("name");
     meeting_info.title = $(".input-meeting-title").val();
@@ -640,14 +656,8 @@ $(function() {
     meeting_info.start = $(".js-list-value").eq(1).text();
     meeting_info.end = $(".js-list-value").eq(2).text();
 
-    meeting_card_template = meeting_card_template.replace(/{{title}}/,
-                              meeting_info.title);
-    meeting_card_template = meeting_card_template.replace(/{{room}}/,
-                              meeting_info.room);
-    meeting_card_template = meeting_card_template.replace(/{{start}}/,
-                              meeting_info.start);
-    meeting_card_template = meeting_card_template.replace(/{{end}}/,
-                              meeting_info.end);
+    var meeting_card = meetingCardFormat("", meeting_info.title, meeting_info.room,
+                                         meeting_info.start, meeting_info.end);
 
     // 发送ajax请求到server进行预定会议室
     $.ajax({
@@ -658,7 +668,7 @@ $(function() {
     }).done(function(response_body) {
       // 注册成功则切换至登录页面并自动补全用户名和密码
       if (response_body !== null) {
-        $(".calendar-day.active .meeting-lists").append(meeting_card_template);
+        $(".calendar-day.active .meeting-lists").append(meeting_card);
       } else {
         console.log("预定会议室失败！");
       }
