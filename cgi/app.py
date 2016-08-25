@@ -14,10 +14,8 @@ else:
 """
 用户登录、注册相关
 """
-def getOneMonthExpires():
-    t = datetime.datetime.now()
-    t = datetime.datetime(t.year, t.month + 1, t.day)
-    t = t.timestamp()
+def newCookieExpires(exdays):
+    t = time.time() + exdays * 24 * 60 * 60
     return time.strftime("%A, %d-%b-%y %H:%M:%S GMT", time.localtime(t))
 
 def handleSignup(environ):
@@ -85,10 +83,10 @@ def application(environ, start_response):
             if body["rember_me"]:
                 headers.append(('Set-Cookie',
                                 'name={};Expires={}'
-                                .format(body['name'], getOneMonthExpires())))
+                                .format(body['name'], newCookieExpires(30))))
                 headers.append(('Set-Cookie',
                                 's_password={};Expires={}'
-                                .format(body['s_password'], getOneMonthExpires())))
+                                .format(body['s_password'], newCookieExpires(30))))
             else:
                 headers.append(('Set-Cookie', 'name={}'.format(body['name'])))
                 headers.append(('Set-Cookie', 's_password={}'.format(body['s_password'])))
@@ -104,4 +102,5 @@ def application(environ, start_response):
         return [json.dumps(body).encode("utf-8")]
 
 if __name__ == '__main__':
-    print(getOneMonthExpires())
+    print(newCookieExpires(30))
+    print(newCookieExpires(-1))
