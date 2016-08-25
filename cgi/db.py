@@ -103,5 +103,13 @@ def addMeeting(timestamp, title, room, start, end):
             "end": meeting[5]
         }
 
+def queryMeetings(start_timestamp, end_timestamp):
+    conn, cursor = createMeetingTable()
+    cursor.execute("""SELECT * FROM meetings
+            WHERE TIMESTAMP >= {} and
+                  TIMESTAMP <= {}""".format(start_timestamp, end_timestamp))
+    meetings = cursor.fetchall()
+    return meetings
+
 if __name__ == '__main__':
-    print(addMeeting("1470844800001", "例会23", "room9", "11:00", "12:00"))
+    print(queryMeetings("1464451200000", "1478966400000"))
