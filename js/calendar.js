@@ -74,6 +74,9 @@ $(function() {
 
     $(".in-month").removeClass("in-month");  // 先清除已有的in-month类
 
+    // 清空会议室预定信息，因为time发生改变需要重新刷新
+    $(".meeting-lists").html("");
+
     $weeks.each(function(page) {
       var $self = $(this);
       $self.attr("name", current_start_time + (page - center_pos) * week_time);
@@ -195,6 +198,9 @@ $(function() {
     var day_time = 86400000;
     var week_time = day_time * 7;
 
+    // 清空会议室预定信息，因为time发生改变需要重新刷新
+    $(".meeting-lists").html("");
+
     // 由于日期发生了变动，要取消当前的today样式
     $(".week .today").removeClass("today");
     $(".week").each(function() {
@@ -238,6 +244,9 @@ $(function() {
     $(".in-month").removeClass("in-month");
     $(".mweek .today").removeClass("today");
 
+    //清空会议室预定信息，因为time发生改变需要重新刷新
+    $(".meeting-lists").html("");
+
     $weeks.each(function(page) {
       var $self = $(this);
       $self.attr("name", current_start_time + (page - center_pos) * week_time);
@@ -271,7 +280,9 @@ $(function() {
 
   }
 
-
+  /*
+   * 读取cookie并转换为hash形式对象
+   */
   function getCookie() {
     // 读取cookie
     var cookie = document.cookie;
@@ -292,7 +303,7 @@ $(function() {
    * 加载index.html页面检查cookie信息确定用户名和登录状态
    * cookie需包含两条选项：username, islogin
    */
-  function updateUserFromCookie() {
+  function updateLoginInfo() {
     // 读取cookie
     var cookie = getCookie();
 
@@ -314,19 +325,23 @@ $(function() {
     window.location.pathname = path;
   }
 
-  function requestLogin(data) {
+  /*
+   * 根据用户名和密码请求server端验证登录
+   * user_info- {name: xx, password: xx, rember_me: xx}
+   */
+  function requestLogin(user_info) {
     $.ajax({
       method: "POST",
       url: "/signin",
       contentType: "application/json;charset='utf-8'",
-      data: JSON.stringify(data)
+      data: JSON.stringify(user_info)
     }).done(function(response_body) {
       // 登录成功则切换至index.html页面并显示在index.html页面显示用户信息
       if (response_body !== null) {
         // 登录成功增加登录状态的cookie信息
         document.cookie = "islogin=true";
-        updateUserFromCookie();
-        // 登录失败则给出错误提示"用户名或密码错误..."
+        updateLoginInfo();
+      // 登录失败则给出错误提示"用户名或密码错误..."
       } else {
         redirect("/sign.html");
       }
@@ -348,17 +363,20 @@ $(function() {
     }
   }
 
+  /*
+   * 格式化预定会议室模板
+   */
   function meetingCardFormat(ishide, title, room, start, end) {
     var meeting_card_template =
     "<div class=meeting-card>" +
         "<div class=card-title>{{title}}</div>" +
-        "<div class='card-info {{ishide}}'>" +
+        "<div class='card-info{{ishide}}'>" +
           "<div><span class='badge badge-normal'>{{room}}</span></div>" +
           "<span class='badge badge-danger'>{{start}}</span><span class=badge>{{end}}</span>" +
           "</div>" +
       "</div>";
 
-    meeting_card_template = meeting_card_template.replace(/{{ishide}}/, ishide);
+    meeting_card_template = meeting_card_template.replace(/{{ishide}}/, ishide ? " hide" : "");
     meeting_card_template = meeting_card_template.replace(/{{title}}/, title);
     meeting_card_template = meeting_card_template.replace(/{{room}}/, room);
     meeting_card_template = meeting_card_template.replace(/{{start}}/, start);
@@ -367,23 +385,18 @@ $(function() {
   }
 
   /*
-   * ajax方式从server端请求会议室预定数据，查询范围为index页面日历时间的起始和结束
+   * ajax方式从server端请求会议室预定数据(月视图)
+   * range_timestamp- {start_timestamp: xx, end_timestamp: xx}
    */
-  function queryMeetings() {
-    var range_timestamp = {};
-    range_timestamp.start_timestamp = $("td").eq(0).attr("name");
-    range_timestamp.end_timestamp = $("td").eq(-1).attr("name");
-
+  function queryMeetingsForMonthView(range_timestamp) {
     $.ajax({
       method: "POST",
       url: "/querymeetings",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(range_timestamp)
     }).done(function(response_meetings) {
-      console.log(response_meetings);
-
       response_meetings.forEach(function(meeting) {
-        var meeting_card = meetingCardFormat("hide", meeting[2], meeting[3],
+        var meeting_card = meetingCardFormat(true, meeting[2], meeting[3],
                                          meeting[4], meeting[5]);
         $("td[name=" + meeting[1] + "] .meeting-lists")
                                   .append(meeting_card);
@@ -391,6 +404,27 @@ $(function() {
     });
   }
 
+    /*
+   * ajax方式从server端请求会议室预定数据(周视图)
+   * range_timestamp- {start_timestamp: xx, end_timestamp: xx}
+   */
+  function queryMeetingsForWeekView(range_timestamp) {
+    $.ajax({
+      method: "POST",
+      url: "/querymeetings",
+      contentType: "application/json;charset='utf-8'",
+      data: JSON.stringify(range_timestamp)
+    }).done(function(response_meetings) {
+      response_meetings.forEach(function(meeting) {
+        var meeting_card = meetingCardFormat(true, meeting[2], meeting[3],
+                                         meeting[4], meeting[5]);
+        $(".day-col[name=" + meeting[1] + "] .meeting-lists")
+                                  .append(meeting_card);
+      });
+    });
+  }
+
+  // 根据cookie进行自动验证登录
   autoLogin();
 
   // 注销登录处理(仅修改islogin的状态为false)
@@ -518,6 +552,18 @@ $(function() {
   $(".previous-month").on("click", function() {
     if (!$(".calendar-month-view").hasClass("hide")) {
       updateCalendarDate($(".mweek"), -1);
+
+      // ajax方式请求server端返回预定会议室的数据
+      // 刷新月视图会议室信息
+      var range_timestamp_month = {};
+      range_timestamp_month.start_timestamp = $("td").eq(0).attr("name");
+      range_timestamp_month.end_timestamp = $("td").eq(-1).attr("name");
+      queryMeetingsForMonthView(range_timestamp_month);
+      // 刷新周视图会议室信息
+      var range_timestamp_week = {};
+      range_timestamp_week.start_timestamp = $(".day-col").eq(0).attr("name");
+      range_timestamp_week.end_timestamp = $(".day-col").eq(-1).attr("name");
+      queryMeetingsForWeekView(range_timestamp_week);
     }
   });
 
@@ -525,6 +571,18 @@ $(function() {
   $(".next-month").on("click", function() {
     if (!$(".calendar-month-view").hasClass("hide")) {
       updateCalendarDate($(".mweek"), +1);
+
+      // ajax方式请求server端返回预定会议室的数据
+      // 刷新月视图会议室信息
+      var range_timestamp_month = {};
+      range_timestamp_month.start_timestamp = $("td").eq(0).attr("name");
+      range_timestamp_month.end_timestamp = $("td").eq(-1).attr("name");
+      queryMeetingsForMonthView(range_timestamp_month);
+      // 刷新周视图会议室信息
+      var range_timestamp_week = {};
+      range_timestamp_week.start_timestamp = $(".day-col").eq(0).attr("name");
+      range_timestamp_week.end_timestamp = $(".day-col").eq(-1).attr("name");
+      queryMeetingsForWeekView(range_timestamp_week);
     }
   });
 
@@ -556,6 +614,18 @@ $(function() {
                 updateWeekNameAttr("backward");
                 // 更新calendar title显示的日期范围
                 setWeekTitle($(".week").eq(current_page).attr("name"));
+
+		// ajax方式请求server端返回预定会议室的数据
+		// 刷新月视图会议室信息
+		var range_timestamp_month = {};
+		range_timestamp_month.start_timestamp = $("td").eq(0).attr("name");
+		range_timestamp_month.end_timestamp = $("td").eq(-1).attr("name");
+		queryMeetingsForMonthView(range_timestamp_month);
+		// 刷新周视图会议室信息
+		var range_timestamp_week = {};
+		range_timestamp_week.start_timestamp = $(".day-col").eq(0).attr("name");
+		range_timestamp_week.end_timestamp = $(".day-col").eq(-1).attr("name");
+		queryMeetingsForWeekView(range_timestamp_week);
               }
             });
         }
@@ -593,6 +663,18 @@ $(function() {
                 updateWeekNameAttr("forward");
                 // 更新calendar title显示的日期范围
                 setWeekTitle($(".week").eq(current_page).attr("name"));
+
+		// ajax方式请求server端返回预定会议室的数据
+		// 刷新月视图会议室信息
+		var range_timestamp_month = {};
+		range_timestamp_month.start_timestamp = $("td").eq(0).attr("name");
+		range_timestamp_month.end_timestamp = $("td").eq(-1).attr("name");
+		queryMeetingsForMonthView(range_timestamp_month);
+		// 刷新周视图会议室信息
+		var range_timestamp_week = {};
+		range_timestamp_week.start_timestamp = $(".day-col").eq(0).attr("name");
+		range_timestamp_week.end_timestamp = $(".day-col").eq(-1).attr("name");
+		queryMeetingsForWeekView(range_timestamp_week);		
               }
             });
         }
@@ -610,6 +692,18 @@ $(function() {
       // month视图下日历title、日期、当前背景颜色等初始化
       initCalendarDate($(".mweek"), 12, "month");
     }
+
+    // ajax方式请求server端返回预定会议室的数据
+    // 刷新月视图会议室信息
+    var range_timestamp_month = {};
+    range_timestamp_month.start_timestamp = $("td").eq(0).attr("name");
+    range_timestamp_month.end_timestamp = $("td").eq(-1).attr("name");
+    queryMeetingsForMonthView(range_timestamp_month);
+    // 刷新周视图会议室信息
+    var range_timestamp_week = {};
+    range_timestamp_week.start_timestamp = $(".day-col").eq(0).attr("name");
+    range_timestamp_week.end_timestamp = $(".day-col").eq(-1).attr("name");
+    queryMeetingsForWeekView(range_timestamp_week);
   });
 
   // 月视图下.scroll-bar-ver的scroll事件处理
@@ -627,6 +721,18 @@ $(function() {
     if ((row_scrollTop - row_first_in_month) < -2) {
       if (row_scrollTop < 4) {
         updateCalendarDate($(".mweek"), -1);
+
+	// ajax方式请求server端返回预定会议室的数据
+	// 刷新月视图会议室信息
+	var range_timestamp_month = {};
+	range_timestamp_month.start_timestamp = $("td").eq(0).attr("name");
+	range_timestamp_month.end_timestamp = $("td").eq(-1).attr("name");
+	queryMeetingsForMonthView(range_timestamp_month);
+	// 刷新周视图会议室信息
+	var range_timestamp_week = {};
+	range_timestamp_week.start_timestamp = $(".day-col").eq(0).attr("name");
+	range_timestamp_week.end_timestamp = $(".day-col").eq(-1).attr("name");
+	queryMeetingsForWeekView(range_timestamp_week);
       } else {
         updateShowMonth("backward");
       }
@@ -636,6 +742,18 @@ $(function() {
     if ((row_scrollTop - row_last_in_month) > -1) {
       if (row_scrollTop > 15) {
         updateCalendarDate($(".mweek"), 1);
+
+	// ajax方式请求server端返回预定会议室的数据
+	// 刷新月视图会议室信息
+	var range_timestamp_month = {};
+	range_timestamp_month.start_timestamp = $("td").eq(0).attr("name");
+	range_timestamp_month.end_timestamp = $("td").eq(-1).attr("name");
+	queryMeetingsForMonthView(range_timestamp_month);
+	// 刷新周视图会议室信息
+	var range_timestamp_week = {};
+	range_timestamp_week.start_timestamp = $(".day-col").eq(0).attr("name");
+	range_timestamp_week.end_timestamp = $(".day-col").eq(-1).attr("name");
+	queryMeetingsForWeekView(range_timestamp_week);
       } else {
         updateShowMonth("forward");
       }
@@ -656,7 +774,7 @@ $(function() {
     meeting_info.start = $(".js-list-value").eq(1).text();
     meeting_info.end = $(".js-list-value").eq(2).text();
 
-    var meeting_card = meetingCardFormat("", meeting_info.title, meeting_info.room,
+    var meeting_card = meetingCardFormat(false, meeting_info.title, meeting_info.room,
                                          meeting_info.start, meeting_info.end);
 
     // 发送ajax请求到server进行预定会议室
@@ -676,5 +794,14 @@ $(function() {
   });
 
   // ajax方式请求server端返回预定会议室的数据
-  queryMeetings();
+  // 刷新月视图会议室信息
+  var range_timestamp_month = {};
+  range_timestamp_month.start_timestamp = $("td").eq(0).attr("name");
+  range_timestamp_month.end_timestamp = $("td").eq(-1).attr("name");
+  queryMeetingsForMonthView(range_timestamp_month);
+  // 刷新周视图会议室信息
+  var range_timestamp_week = {};
+  range_timestamp_week.start_timestamp = $(".day-col").eq(0).attr("name");
+  range_timestamp_week.end_timestamp = $(".day-col").eq(-1).attr("name");
+  queryMeetingsForWeekView(range_timestamp_week);
 });
