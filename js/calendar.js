@@ -396,10 +396,11 @@ $(function() {
       data: JSON.stringify(range_timestamp)
     }).done(function(response_meetings) {
       response_meetings.forEach(function(meeting) {
-        var meeting_card = meetingCardFormat(true, meeting[2], meeting[3],
+	var $meeting_lists = $("td[name=" + meeting[1] + "] .meeting-lists");
+	var ishide = $meeting_lists.parent().hasClass("active")? "" : true;
+        var meeting_card = meetingCardFormat(ishide, meeting[2], meeting[3],
                                          meeting[4], meeting[5]);
-        $("td[name=" + meeting[1] + "] .meeting-lists")
-                                  .append(meeting_card);
+        $meeting_lists.append(meeting_card);
       });
     });
   }
@@ -416,10 +417,11 @@ $(function() {
       data: JSON.stringify(range_timestamp)
     }).done(function(response_meetings) {
       response_meetings.forEach(function(meeting) {
-        var meeting_card = meetingCardFormat(true, meeting[2], meeting[3],
+	var $meeting_lists = $(".day-col[name=" + meeting[1] + "] .meeting-lists");
+	var ishide = $meeting_lists.parent().hasClass("active")? "" : true;
+        var meeting_card = meetingCardFormat(ishide, meeting[2], meeting[3],
                                          meeting[4], meeting[5]);
-        $(".day-col[name=" + meeting[1] + "] .meeting-lists")
-                                  .append(meeting_card);
+        $meeting_lists.append(meeting_card);
       });
     });
   }
@@ -772,4 +774,18 @@ $(function() {
   // 刷新周视图会议室信息
   queryMeetingsForWeekView({start_timestamp: $(".day-col").eq(0).attr("name"),
                             end_timestamp: $(".day-col").eq(-1).attr("name")});
+
+  setInterval(function() {
+    // TODO： zx 全部刷新会导致页面闪烁问题，需要考虑只针对变化的信息进行刷新
+    // 清空预定会议室信息，因为需要重新刷新
+    $(".meeting-lists").html("");
+
+    // ajax方式请求server端返回预定会议室的数据
+    // 刷新月视图会议室信息
+    queryMeetingsForMonthView({start_timestamp: $("td").eq(0).attr("name"),
+                               end_timestamp: $("td").eq(-1).attr("name")});
+    // 刷新周视图会议室信息
+    queryMeetingsForWeekView({start_timestamp: $(".day-col").eq(0).attr("name"),
+                              end_timestamp: $(".day-col").eq(-1).attr("name")});
+  }, 5000);
 });
