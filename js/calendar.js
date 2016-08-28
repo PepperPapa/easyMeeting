@@ -366,9 +366,9 @@ $(function() {
   /*
    * 格式化预定会议室模板
    */
-  function meetingCardFormat(ishide, title, room, start, end) {
+  function meetingCardFormat(ishide, id, title, room, start, end) {
     var meeting_card_template =
-    "<div class=meeting-card>" +
+    "<div class=meeting-card id={{id}}>" +
         "<div class=card-title>{{title}}</div>" +
         "<div class='card-info{{ishide}}'>" +
           "<div><span class='badge badge-normal'>{{room}}</span></div>" +
@@ -377,6 +377,7 @@ $(function() {
       "</div>";
 
     meeting_card_template = meeting_card_template.replace(/{{ishide}}/, ishide ? " hide" : "");
+    meeting_card_template = meeting_card_template.replace(/{{id}}/, id);
     meeting_card_template = meeting_card_template.replace(/{{title}}/, title);
     meeting_card_template = meeting_card_template.replace(/{{room}}/, room);
     meeting_card_template = meeting_card_template.replace(/{{start}}/, start);
@@ -395,10 +396,14 @@ $(function() {
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(range_timestamp)
     }).done(function(response_meetings) {
+      // 使用全局变量记录当前页面显示的月视图下的会议室信息，用于定时刷新会议室任务与server端
+      // 返回的数据进行比对
+      window.last_month_meetings = response_meetings;
+
       response_meetings.forEach(function(meeting) {
-	var $meeting_lists = $("td[name=" + meeting[1] + "] .meeting-lists");
-	var ishide = $meeting_lists.parent().hasClass("active")? "" : true;
-        var meeting_card = meetingCardFormat(ishide, meeting[2], meeting[3],
+        var $meeting_lists = $("td[name=" + meeting[1] + "] .meeting-lists");
+        var ishide = $meeting_lists.parent().hasClass("active")? "" : true;
+        var meeting_card = meetingCardFormat(ishide, meeting[0], meeting[2], meeting[3],
                                          meeting[4], meeting[5]);
         $meeting_lists.append(meeting_card);
       });
@@ -416,14 +421,58 @@ $(function() {
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(range_timestamp)
     }).done(function(response_meetings) {
+      // 使用全局变量记录当前页面显示的周视图下的会议室信息，用于定时刷新会议室任务与server端
+      // 返回的数据进行比对
+      window.last_week_meetings = response_meetings;
+
       response_meetings.forEach(function(meeting) {
-	var $meeting_lists = $(".day-col[name=" + meeting[1] + "] .meeting-lists");
-	var ishide = $meeting_lists.parent().hasClass("active")? "" : true;
-        var meeting_card = meetingCardFormat(ishide, meeting[2], meeting[3],
+        var $meeting_lists = $(".day-col[name=" + meeting[1] + "] .meeting-lists");
+        var ishide = $meeting_lists.parent().hasClass("active")? "" : true;
+        var meeting_card = meetingCardFormat(ishide, meeting[0], meeting[2], meeting[3],
                                          meeting[4], meeting[5]);
         $meeting_lists.append(meeting_card);
       });
     });
+  }
+
+  /*
+  * 比对当前会议室信息和上一次会议室信息的不同
+  * last_meetings: [[id, timestamp, title, room. start, end], []...]
+  * current_meetings: [[id, timestamp, title, room. start, end], []...]
+  * return value: [[id, timestamp, title, room. start, end, update_sate], []...]
+  * tips: update_state: "+":新增， "-":删除
+  */
+  function diffMeetings(last_meetings, current_meetings) {
+    var change_meetings = [];
+
+    // last_meetings中没有在current_meetings出现的为待删除项目
+    last_meetings.forEach(function(last_meeting) {
+      var state = false;
+      for (var m = 0; m < current_meetings.length; m++) {
+        // 由于server端id不会重复，id相同则说明该项数据相同
+        if (last_meeting[0] === current_meetings[m][0]) {
+          state = true;
+        }
+      }
+      if (!state) {
+        change_meetings.push(last_meeting.concat("-"));
+      }
+    });
+
+    // current_meetings中没有在last_meetings中出现的待新增项目
+    current_meetings.forEach(function(meeting) {
+      var state = false;
+      for (var l = 0; l < last_meetings.length; l++) {
+        // 由于server端id不会重复，id相同则说明该项数据相同
+        if (meeting[0] == last_meetings[l][0]) {
+          state = true;
+        }
+      }
+      if (!state) {
+        change_meetings.push(meeting.concat("+"));
+      }
+    });
+    return change_meetings;
   }
 
   // 根据cookie进行自动验证登录
@@ -748,19 +797,36 @@ $(function() {
     meeting_info.start = $(".js-list-value").eq(1).text();
     meeting_info.end = $(".js-list-value").eq(2).text();
 
-    var meeting_card = meetingCardFormat(false, meeting_info.title, meeting_info.room,
-                                         meeting_info.start, meeting_info.end);
-
     // 发送ajax请求到server进行预定会议室
     $.ajax({
       method: "POST",
       url: "/addmeeting",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(meeting_info)
-    }).done(function(response_body) {
+    }).done(function(meeting_info) {
       // 注册成功则切换至登录页面并自动补全用户名和密码
-      if (response_body !== null) {
+      if (meeting_info !== null) {
+        var meeting_card = meetingCardFormat(false, meeting_info.id,
+                                        meeting_info.title, meeting_info.room,
+                                        meeting_info.start, meeting_info.end);
         $(".calendar-day.active .meeting-lists").append(meeting_card);
+
+        // 上一次会议室信息全局变量中需增加该条记录
+        if ($calendar_month_view.hasClass("hide")) {
+          window.last_week_meetings.push([meeting_info.id,
+                                          meeting_info.timestamp,
+                                          meeting_info.title,
+                                          meeting_info.room,
+                                          meeting_info.start,
+                                          meeting_info.end]);
+        } else {
+          window.last_month_meetings.push([meeting_info.id,
+                                          meeting_info.timestamp,
+                                          meeting_info.title,
+                                          meeting_info.room,
+                                          meeting_info.start,
+                                          meeting_info.end]);
+        }
       } else {
         console.log("预定会议室失败！");
       }
@@ -777,15 +843,72 @@ $(function() {
 
   setInterval(function() {
     // TODO： zx 全部刷新会导致页面闪烁问题，需要考虑只针对变化的信息进行刷新
-    // 清空预定会议室信息，因为需要重新刷新
-    $(".meeting-lists").html("");
 
-    // ajax方式请求server端返回预定会议室的数据
-    // 刷新月视图会议室信息
-    queryMeetingsForMonthView({start_timestamp: $("td").eq(0).attr("name"),
-                               end_timestamp: $("td").eq(-1).attr("name")});
-    // 刷新周视图会议室信息
-    queryMeetingsForWeekView({start_timestamp: $(".day-col").eq(0).attr("name"),
-                              end_timestamp: $(".day-col").eq(-1).attr("name")});
+    // 月视图请求范围
+    var month_view_range = {start_timestamp: $("td").eq(0).attr("name"),
+                            end_timestamp: $("td").eq(-1).attr("name")};
+    // 周视图请求范围
+    var week_view_range = {start_timestamp: $(".day-col").eq(0).attr("name"),
+                           end_timestamp: $(".day-col").eq(-1).attr("name")};
+
+    // 请求月视图会议室数据
+    $.ajax({
+      method: "POST",
+      url: "/querymeetings",
+      contentType: "application/json;charset='utf-8'",
+      data: JSON.stringify(month_view_range)
+    }).done(function(response_meetings) {
+      // 使用全局变量记录当前页面显示的月视图下的会议室信息，用于定时刷新会议室任务与server端
+      // 返回的数据进行比对
+      window.month_meetings = response_meetings;
+      var change_meetings = diffMeetings(window.last_month_meetings,
+                                         window.month_meetings);
+      // 更新last_month_meetings为当前值
+      window.last_month_meetings = response_meetings;
+
+      // 刷新month view页面的会议室预定信息
+      change_meetings.forEach(function(meeting) {
+        // 新增会议室
+        if (meeting[6] === "+") {
+          var $meeting_lists = $("td[name=" + meeting[1] + "] .meeting-lists");
+          var ishide = $meeting_lists.parent().hasClass("active")? "" : true;
+          var meeting_card = meetingCardFormat(ishide, meeting[0], meeting[2],
+                                meeting[3], meeting[4], meeting[5]);
+          $meeting_lists.append(meeting_card);
+        } else {  // 删除会议
+          $("#" + meeting[0]).remove();
+        }
+      });
+    });
+
+    // 请求周视图会议室数据
+    $.ajax({
+      method: "POST",
+      url: "/querymeetings",
+      contentType: "application/json;charset='utf-8'",
+      data: JSON.stringify(week_view_range)
+    }).done(function(response_meetings) {
+      // 使用全局变量记录当前页面显示的月视图下的会议室信息，用于定时刷新会议室任务与server端
+      // 返回的数据进行比对
+      window.week_meetings = response_meetings;
+      var change_meetings = diffMeetings(window.last_week_meetings,
+                                         window.month_meetings);
+      // 更新last_month_meetings为当前值
+      window.last_week_meetings = response_meetings;
+
+      // 刷新month view页面的会议室预定信息
+      change_meetings.forEach(function(meeting) {
+        // 新增会议室
+        if (meeting[6] === "+") {
+          var $meeting_lists = $(".day-col[name=" + meeting[1] + "] .meeting-lists");
+          var ishide = $meeting_lists.parent().hasClass("active")? "" : true;
+          var meeting_card = meetingCardFormat(ishide, meeting[0], meeting[2],
+                                meeting[3], meeting[4], meeting[5]);
+          $meeting_lists.append(meeting_card);
+        } else {  // 删除会议
+          $("#" + meeting[0]).remove();
+        }
+      });
+    });
   }, 5000);
 });

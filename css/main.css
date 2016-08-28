@@ -45,11 +45,12 @@ header.navbar-default {
 }
 
 .logo a {
-  color: #ddd;
+  color: #fff;
   text-decoration: none;
 }
 
 .logo span {
+  font-size: 1.2em;
   font-weight: bold;
 }
 
