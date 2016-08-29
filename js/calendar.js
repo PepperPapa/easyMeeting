@@ -74,9 +74,6 @@ $(function() {
 
     $(".in-month").removeClass("in-month");  // 先清除已有的in-month类
 
-    // 清空会议室预定信息，因为time发生改变需要重新刷新
-    $(".meeting-lists").html("");
-
     $weeks.each(function(page) {
       var $self = $(this);
       $self.attr("name", current_start_time + (page - center_pos) * week_time);
@@ -110,6 +107,9 @@ $(function() {
 
     // 为当天的.day-col元素添加today类名，以更新today的css样式
     $current_week.children().eq(parseToday().day).addClass("today");
+
+    // 清空会议室预定信息，因为time发生改变需要重新刷新
+    $(".meeting-card").remove();
   }
 
   /*
@@ -198,9 +198,6 @@ $(function() {
     var day_time = 86400000;
     var week_time = day_time * 7;
 
-    // 清空会议室预定信息，因为time发生改变需要重新刷新
-    $(".meeting-lists").html("");
-
     // 由于日期发生了变动，要取消当前的today样式
     $(".week .today").removeClass("today");
     $(".week").each(function() {
@@ -217,6 +214,9 @@ $(function() {
         }
       });
     });
+
+    // 清空会议室预定信息，因为time发生改变需要重新刷新
+    $(".meeting-card").remove();
   }
 
   /*
@@ -244,8 +244,7 @@ $(function() {
     $(".in-month").removeClass("in-month");
     $(".mweek .today").removeClass("today");
 
-    //清空会议室预定信息，因为time发生改变需要重新刷新
-    $(".meeting-lists").html("");
+
 
     $weeks.each(function(page) {
       var $self = $(this);
@@ -278,6 +277,8 @@ $(function() {
     // 设置scroll-bar的位置使当天能够显示出来
     setScrollTop(12);
 
+    //清空会议室预定信息，因为time发生改变需要重新刷新
+    $(".meeting-card").remove();
   }
 
   /*
@@ -783,9 +784,32 @@ $(function() {
     }
   });
 
+
   // 预定会议室弹出框的select选项处理
   $(".js-select-list").on("change", function(e) {
     $(this).prev().text(this.value);
+
+    // 预定会议室结束时间判断，必须晚于开始时间，否则添加error提示
+    var start_time = $(".start-time").val().replace(":", ".");
+    var end_time = $(".end-time").val().replace(":", ".");
+    if (end_time <= start_time) {
+      $(".end-time").parent().addClass("error");
+    } else {
+      $(".end-time").parent().removeClass("error");
+    }
+  });
+
+  // 会议室标题textarea元素失去焦点判断是否为空，为空则添加红色边框进行提醒
+  $(".input-meeting-title").on("blur", function() {
+    var text = $(this).val().trim();
+    if (text.length === 0) {
+      $(this).addClass("error");
+    }
+  });
+
+  // 会议室标题textarea元素获取焦点清空.error类
+  $(".input-meeting-title").on("focus", function() {
+    $(this).removeClass("error");
   });
 
   // 会议室预定按钮点击处理效果
@@ -797,40 +821,47 @@ $(function() {
     meeting_info.start = $(".js-list-value").eq(1).text();
     meeting_info.end = $(".js-list-value").eq(2).text();
 
-    // 发送ajax请求到server进行预定会议室
-    $.ajax({
-      method: "POST",
-      url: "/addmeeting",
-      contentType: "application/json;charset='utf-8'",
-      data: JSON.stringify(meeting_info)
-    }).done(function(meeting_info) {
-      // 注册成功则切换至登录页面并自动补全用户名和密码
-      if (meeting_info !== null) {
-        var meeting_card = meetingCardFormat(false, meeting_info.id,
-                                        meeting_info.title, meeting_info.room,
-                                        meeting_info.start, meeting_info.end);
-        $(".calendar-day.active .meeting-lists").append(meeting_card);
+    // 模拟触发一次textarea元素的blur事件、select元素的change事件，使UI错误提示工作
+    $(".input-meeting-title").trigger("blur");
+    $(".js-select-list").trigger("change");
 
-        // 上一次会议室信息全局变量中需增加该条记录
-        if ($calendar_month_view.hasClass("hide")) {
-          window.last_week_meetings.push([meeting_info.id,
-                                          meeting_info.timestamp,
-                                          meeting_info.title,
-                                          meeting_info.room,
-                                          meeting_info.start,
-                                          meeting_info.end]);
+    // 未发现.error类的元素才允许预定会议室
+    if ($(".pop-over .error").length === 0) {
+      // 发送ajax请求到server进行预定会议室
+      $.ajax({
+        method: "POST",
+        url: "/addmeeting",
+        contentType: "application/json;charset='utf-8'",
+        data: JSON.stringify(meeting_info)
+      }).done(function(meeting_info) {
+        // 注册成功则切换至登录页面并自动补全用户名和密码
+        if (meeting_info !== null) {
+          var meeting_card = meetingCardFormat(false, meeting_info.id,
+                                          meeting_info.title, meeting_info.room,
+                                          meeting_info.start, meeting_info.end);
+          $(".calendar-day.active .meeting-lists").append(meeting_card);
+
+          // 上一次会议室信息全局变量中需增加该条记录
+          if ($calendar_month_view.hasClass("hide")) {
+            window.last_week_meetings.push([meeting_info.id,
+                                            meeting_info.timestamp,
+                                            meeting_info.title,
+                                            meeting_info.room,
+                                            meeting_info.start,
+                                            meeting_info.end]);
+          } else {
+            window.last_month_meetings.push([meeting_info.id,
+                                            meeting_info.timestamp,
+                                            meeting_info.title,
+                                            meeting_info.room,
+                                            meeting_info.start,
+                                            meeting_info.end]);
+          }
         } else {
-          window.last_month_meetings.push([meeting_info.id,
-                                          meeting_info.timestamp,
-                                          meeting_info.title,
-                                          meeting_info.room,
-                                          meeting_info.start,
-                                          meeting_info.end]);
+          console.log("预定会议室失败！");
         }
-      } else {
-        console.log("预定会议室失败！");
-      }
-    });
+      });
+    }
   });
 
   // ajax方式请求server端返回预定会议室的数据
