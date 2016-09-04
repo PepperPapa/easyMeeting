@@ -42,13 +42,45 @@ h2 {
   display: none;
 }
 
+.signup-info {
+  position: relative;
+}
+
+.error {
+  position: absolute;
+  top: 0;
+  left: 376px;
+  width: 300px;
+  color: red;
+  height: 47px;
+  line-height: 47px;
+  border: 1px solid red;
+  border-radius: 3px !important;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+  background-color: #fff;
+}
+
+.error div {
+  position: absolute;
+  border-bottom: 1px solid red;
+  border-left: 1px solid red;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #fff;
+  border-radius: 0 !important;
+  width: 16px;
+  height: 16px;
+  top: 15px;
+  left: -8px;
+  background-color: #fff;
+  transform: rotate(45deg);
+}
+
 input {
   outline: none;
 }
 
 input[type="text"],
 input[type="password"] {
-  display: block;
   height: 47px;
   width: 100%;
   box-sizing: border-box;
@@ -110,8 +142,8 @@ a:active {
   background-color: #5ca941;
 }
 
-.signup-input :not(:first-child),
-.signin-input :not(:first-child) {
+.signup-input > :not(:first-child),
+.signin-input > :not(:first-child) {
   border-top: 1px solid #d5d5d5;
 }
 

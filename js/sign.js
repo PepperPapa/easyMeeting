@@ -17,6 +17,55 @@ $(function() {
     return false;
   }
 
+  // 校验用户名格式
+  function formatUsername(username) {
+    if (username.length > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  // 校验密码格式
+  function formatPassword(password) {
+    if (password.length > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  // 校验重复输入的密码是否相同
+  function verifyPassword(password, repeate_password) {
+    return password === repeate_password;
+  }
+
+  $(".signup-info input").on("input", function(e) {
+    var info = e.target.name;
+    if (info === "username") {
+      if (!formatUsername(this.value)) {
+        $(this).next().attr("class", "error");
+      } else {
+        $(this).next().attr("class", "hide");
+      }
+    }
+
+    if (info === "password") {
+      if (!formatPassword(this.value)) {
+        $(this).next().attr("class", "error");
+      } else {
+        $(this).next().attr("class", "hide");
+      }
+    }
+
+    if (info === "re-password") {
+      var pwd = $(".signup-info input[name=password]").val();
+      if (!verifyPassword(pwd, this.value)) {
+        $(this).next().attr("class", "error");
+      } else {
+        $(this).next().attr("class", "hide");
+      }
+    }
+
+  });
 
   // 点击注册进入注册页面处理
   el_signup.addEventListener("click", function() {
@@ -55,7 +104,7 @@ $(function() {
    * 注册和登录页面，用户名改变则初始化alert
    */
   $("input[name=username]").on("textInput", function() {
-    // TODO: 每次输入文本都出发该事件是否合理哪?
+    // TODO: 每次输入文本都触发该事件是否合理哪?
     $(".alert").each(function() {
       this.className = "alert hide";
     });
@@ -72,56 +121,64 @@ $(function() {
     signup_info.password = $(".signup-input input").eq(1).val();
     signup_info.verify = $(".signup-input input").eq(2).val();
 
-    // 发送ajax请求到server进行用户注册
-    $.ajax({
-      method: "POST",
-      url: "/signup",
-      contentType: "application/json;charset='utf-8'",
-      data: JSON.stringify(signup_info)
-    }).done(function(response_body) {
-      // 注册成功则切换至登录页面并自动补全用户名和密码
-      if (response_body !== null) {
-	$(".to-signin").trigger("click");
-	$(".signin-input input").eq(0).val(signup_info.name);
-	$(".signin-input input").eq(1).val(signup_info.password);
-	$(".signin-form .alert").text("注册成功,请登录...")
-	  .addClass("alert-success").removeClass("hide");
-      // 注册失败则给出错误提示"用户名已经存在"
-      } else {
-	$(".signup-form .alert").text("用户名已经存在...")
-	  .addClass("alert-warning").removeClass("hide");	
-      }
-    });
+    $(".signup-info input").trigger("input");
+    if (formatUsername(signup_info.name) &&
+        formatPassword(signup_info.password) &&
+        verifyPassword(signup_info.password, signup_info.verify)) {
+      // 发送ajax请求到server进行用户注册
+      $.ajax({
+        method: "POST",
+        url: "/easyMeeting/signup",
+        contentType: "application/json;charset='utf-8'",
+        data: JSON.stringify(signup_info)
+      }).done(function(response_body) {
+        // 注册成功则切换至登录页面并自动补全用户名和密码
+        if (response_body !== null) {
+          $(".to-signin").trigger("click");
+          $(".signin-input input").eq(0).val(signup_info.name);
+          $(".signin-input input").eq(1).val(signup_info.password);
+          $(".signin-form .alert").text("注册成功,请登录...")
+                        .addClass("alert-success").removeClass("hide");
+          // 注册失败则给出错误提示"用户名已经存在"
+        } else {
+          $(".signup-form .alert").text("用户已注册，请直接登录或选择其他的用户名进行注册...")
+                        .addClass("alert-warning").removeClass("hide");
+        }
+      });
+    } else {
+      $(".signup-form .alert").text("注册信息不满足格式要求，请重新输入...")
+                    .addClass("alert-warning").removeClass("hide");
+    }
   });
 
   /*
    * 跳转到path指定的页面
    */
   function redirect(path) {
-    window.location.pathname = path;
+    window.location.pathname = "/easyMeeting" + path;
   }
 
   function requestLogin(data) {
     $.ajax({
       method: "POST",
-      url: "/signin",
+      url: "/easyMeeting/signin",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(data)
     }).done(function(response_body) {
       // 登录成功则切换至index.html页面并显示在index.html页面显示用户信息
       if (response_body !== null) {
-	// 登录成功增加登录状态的cookie信息
-	document.cookie = "islogin=true";
-	// 跳转到主页面，主页面通过cookie信息刷新用户信息
-	redirect("/index.html");
-	// 登录失败则给出错误提示"用户名或密码错误..."
+        // 登录成功增加登录状态的cookie信息
+        document.cookie = "islogin=true";
+        // 跳转到主页面，主页面通过cookie信息刷新用户信息
+        redirect("/index.html");
+        // 登录失败则给出错误提示"用户名或密码错误..."
       } else {
-	$(".signin-form .alert").text("用户名或密码错误...")
-	  .addClass("alert-warning").removeClass("hide");	
+        $(".signin-form .alert").text("用户名或密码错误...")
+                  .addClass("alert-warning").removeClass("hide");
       }
     });
   }
-  
+
   /*
    * 点击登录按钮处理：ajax请求发往server端进行登录处理，登录成功跳转到
    * index.html页面，失败进行错误提示
@@ -132,7 +189,7 @@ $(function() {
     signin_info.name = $(".signin-input input").eq(0).val();
     signin_info.s_password = $(".signin-input input").eq(1).val();
     signin_info.rember_me = document.querySelector("input[name=rember-me").checked;
-    
+
     // 发送ajax请求到server进行用户登录
     requestLogin(signin_info);
   });

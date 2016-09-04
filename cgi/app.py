@@ -76,14 +76,16 @@ def showEnviron(environ):
 
 
 def application(environ, start_response):
-    url = environ['PATH_INFO']
-    if url == "/signup":
+    url = environ['PATH_INFO']    # /easyMeeting/xxxx
+    url = url.split("/")[2]
+    print(url)
+    if url == "signup":
         start_response('200 OK',
                        [('Content-Type','application/json;charset="utf-8"')])
         body = handleSignup(environ)
         #html += showEnviron(environ)
         return [body.encode("utf-8")]
-    elif url == "/signin":
+    elif url == "signin":
         body = handleSignin(environ)
         #html += showEnviron(environ)
 
@@ -93,25 +95,25 @@ def application(environ, start_response):
         if body:
             if body["rember_me"]:
                 headers.append(('Set-Cookie',
-                                'name={};Expires={}'
+                                'name={};Expires={};'
                                 .format(body['name'], newCookieExpires(30))))
                 headers.append(('Set-Cookie',
-                                's_password={};Expires={}'
+                                's_password={};Expires={};'
                                 .format(body['s_password'], newCookieExpires(30))))
             else:
-                headers.append(('Set-Cookie', 'name={}'.format(body['name'])))
-                headers.append(('Set-Cookie', 's_password={}'.format(body['s_password'])))
+                headers.append(('Set-Cookie', 'name={};'.format(body['name'])))
+                headers.append(('Set-Cookie', 's_password={};'.format(body['s_password'])))
 
         start_response('200 OK', headers)
         body = json.dumps(body)
         return [body.encode("utf-8")]
-    elif url == "/addmeeting":
+    elif url == "addmeeting":
         start_response('200 OK',
                        [('Content-Type','application/json;charset="utf-8"')])
         body = handleAddMeeting(environ)
         #html += showEnviron(environ)
         return [json.dumps(body).encode("utf-8")]
-    elif url == "/querymeetings":
+    elif url == "querymeetings":
         start_response('200 OK',
                        [('Content-Type','application/json;charset="utf-8"')])
         body = handleQueryMeeting(environ)

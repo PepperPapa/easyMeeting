@@ -323,7 +323,7 @@ $(function() {
    * 跳转到path指定的页面
    */
   function redirect(path) {
-    window.location.pathname = path;
+    window.location.pathname = "/easyMeeting" + path;
   }
 
   /*
@@ -333,7 +333,7 @@ $(function() {
   function requestLogin(user_info) {
     $.ajax({
       method: "POST",
-      url: "/signin",
+      url: "/easyMeeting/signin",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(user_info)
     }).done(function(response_body) {
@@ -393,7 +393,7 @@ $(function() {
   function queryMeetingsForMonthView(range_timestamp) {
     $.ajax({
       method: "POST",
-      url: "/querymeetings",
+      url: "/easyMeeting/querymeetings",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(range_timestamp)
     }).done(function(response_meetings) {
@@ -418,7 +418,7 @@ $(function() {
   function queryMeetingsForWeekView(range_timestamp) {
     $.ajax({
       method: "POST",
-      url: "/querymeetings",
+      url: "/easyMeeting/querymeetings",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(range_timestamp)
     }).done(function(response_meetings) {
@@ -830,7 +830,7 @@ $(function() {
       // 发送ajax请求到server进行预定会议室
       $.ajax({
         method: "POST",
-        url: "/addmeeting",
+        url: "/easyMeeting/addmeeting",
         contentType: "application/json;charset='utf-8'",
         data: JSON.stringify(meeting_info)
       }).done(function(meeting_info) {
@@ -885,7 +885,7 @@ $(function() {
     // 请求月视图会议室数据
     $.ajax({
       method: "POST",
-      url: "/querymeetings",
+      url: "/easyMeeting/querymeetings",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(month_view_range)
     }).done(function(response_meetings) {
@@ -915,7 +915,7 @@ $(function() {
     // 请求周视图会议室数据
     $.ajax({
       method: "POST",
-      url: "/querymeetings",
+      url: "/easyMeeting/querymeetings",
       contentType: "application/json;charset='utf-8'",
       data: JSON.stringify(week_view_range)
     }).done(function(response_meetings) {

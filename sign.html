@@ -19,34 +19,47 @@
       <h1>easyMeeting</h1>
       <h2>简单地预定、管理会议</h2>
     </header>
+
     <main class="sign-flow">
       <div class="sign-tab-navs">
         <span class="to-signup active">注册</span>
         <span class="to-signin">登录</span>
       </div>
+
       <div class="sign-form">
-	<!-- 注册  -->
+	      <!-- 注册  -->
         <div class="signup-form">
           <div class="signup-input">
-            <input type="text" name="username" placeholder="用户名">
-            <input type="password" name="password" placeholder="密码">
-            <input type="password" name="re-password" placeholder="重复输入密码">
+            <div id="username" class="signup-info">
+              <input type="text" name="username" placeholder="用户名">
+              <div class="hide"><div></div><span>用户名不能为空</span></div>
+            </div>
+
+            <div id="password" class="signup-info">
+              <input type="password" name="password" placeholder="密码">
+              <div class="hide"><div></div><span>密码不能为空</span></div>
+            </div>
+
+            <div id="re-password" class="signup-info">
+              <input type="password" name="re-password" placeholder="重复输入密码">
+              <div class="hide"><div></div><span>重复输入密码错误</span></div>
+            </div>
           </div>
-	  <div class="alert hide"></div>
+	        <div class="alert hide"></div>
           <button class="btn btn-signup" type="submit">注册</button>
         </div>
 
-	<!-- 登录  -->
+	      <!-- 登录  -->
         <div class="signin-form hide">
           <div class="signin-input">
             <input type="text" name="username" placeholder="用户名">
             <input type="password" name="password" placeholder="密码">
           </div>
-	  <div class="alert hide"></div>
+	        <div class="alert hide"></div>
           <button class="btn btn-signin" type="submit">登录</button>
           <div class="rember-user pull-left">
             <input type="checkbox" name="rember-me" checked>
-	    <label for="rember-me">记住我</label>
+	          <label for="rember-me">记住我</label>
           </div>
           <div class="forgot-passwod pull-right"><a href="#">忘记密码?</a></div>
         </div>
